@@ -1,3 +1,5 @@
+package client;
+
 import java.io.*;
 import java.net.*;
 
@@ -37,7 +39,7 @@ class Client {
             System.out.println("Error after authentication...");
             e.printStackTrace();}
         while(true) { // read messages from the console and send them to the server
-            System.out.println("DISCONN to disconnect, COMMTEST to test connection");
+            System.out.println("DISCONN to disconnect, COMMTEST to test connection, CREATE_BOARD to create a board");
             frase=in.readLine();
             //Disconnection request to server == END CONNECTION WITH CLIENT
             if(frase.compareTo("DISCONN")==0) {

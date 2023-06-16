@@ -35,7 +35,7 @@ class Server  {
             // Waits for clients to connect
             while (true) {
                 Socket clientSocket = sock.accept();
-                System.out.println("Client connected: " + clientSocket.getInetAddress());
+                System.out.println("client.Client connected: " + clientSocket.getInetAddress());
                 // Handles client connection in a separate thread
                 Thread clientThread = new Thread(() -> {
                     try {processRequests(clientSocket);
@@ -87,7 +87,7 @@ class Server  {
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-                    System.out.println("Client: " + clientSocket.getInetAddress() + " disconnected");
+                    System.out.println("client.Client: " + clientSocket.getInetAddress() + " disconnected");
                     return; // Exit the method to close the connection
                 case 4:
                     System.out.println("Received AUTH request");
