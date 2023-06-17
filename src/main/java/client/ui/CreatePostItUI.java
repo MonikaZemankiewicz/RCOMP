@@ -1,14 +1,11 @@
 package client.ui;
 
-import client.SharedBoardApp;
-import messageUtils.SBPMessage;
-
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.io.*;
+import java.util.Arrays;
 import java.util.List;
+
+import static postitService.uploadImage.uploadImage;
+import static postitService.uploadText.uploadText;
 
 public class CreatePostItUI implements Runnable {
 
@@ -28,23 +25,12 @@ public class CreatePostItUI implements Runnable {
     @Override
     public void run() {
         try {
-            SBPMessage ownedBoardsMessage = SharedBoardApp.ownedBoardsRequest(in, sOut, sIn); //request all owned board by user
-
-            if(ownedBoardsMessage.code() == ERR_CODE) {       //verify message code
-                throw new RuntimeException(ownedBoardsMessage.data());
-            }
-
-            String selectedBoard = showAndSelectBoard(ownedBoardsMessage, in); //select board
-
-            String selectedCell = selectCell(in); // chose cell position
-
-            String dataToSend = selectedBoard + "\0" + selectedCell;
-            SBPMessage createPostItMessage = SharedBoardApp.shareBoardRequest(in, sOut, sIn, dataToSend);
-            System.out.println(createPostItMessage.data());
-
+            String board = showAndSelectBoard(in);
+            UploadContent(in, board);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error" + e.getMessage());
         }
+
     }
     public static String selectCell(BufferedReader in) throws IOException {
         String data = "";
@@ -64,37 +50,52 @@ public class CreatePostItUI implements Runnable {
         } while(true);
     }
 
-    public static String showAndSelectBoard(SBPMessage responseMessage, BufferedReader in) throws IOException {
-        String message = responseMessage.data();
-        int currentIndex = 0;
-        int currentBoardNumber = 1;
-        char currentChar;
-        String currentBoardName = "";
-        List<String> boardsNames = new ArrayList<>();
+    public static void UploadContent(BufferedReader in, String board) throws Exception{
+        System.out.println("Select content type: \n1. Text\n2. Image");
+        int option = in.read();
+        if(option>2){
+            System.out.println("\nInvalid option! Try again:");
+            System.out.println("Select content type: \n1. Text\n2. Image");
+            option = in.read();
 
-        System.out.println("\nSelect a board:\n");
-
-        while(currentIndex < (responseMessage.d_length_1() + responseMessage.d_length_2())) {
-            while((currentChar = message.charAt(currentIndex)) != '\0') {
-                currentBoardName = currentBoardName.concat(String.valueOf(currentChar));
-                currentIndex++;
+            switch (option){
+                case 1:
+                    uploadText();
+                    break;
+                case 2:
+                    uploadImage();
+                    break;
+                default:
+                    break;
             }
-            System.out.printf("%d - %s\n", currentBoardNumber, currentBoardName);  //Print Board information
-            boardsNames.add(currentBoardName);
-            currentBoardNumber++;
-            currentIndex++;
-            currentBoardName = "";
         }
-        do {
-            try {
-                int option = Integer.parseInt(in.readLine());
-                if(option < 0 || option > boardsNames.size()) {
-                    throw new Exception();
+
+
+    }
+    public static String showAndSelectBoard(BufferedReader in) throws Exception{
+        File dir = new File(".");
+        List<String> list = Arrays.asList(dir.list(
+                new FilenameFilter() {
+                    @Override public boolean accept(File dir, String name) {
+                        return name.endsWith(".html");
+                    }
                 }
-                return (boardsNames.get(option - 1));
-            } catch(Exception e) {
-                System.out.println("\nInvalid option. Please, try again:");
-            }
-        } while(true);
+        ));
+
+        System.out.println("\nSelect a board by index:");
+
+        int idx = 1;
+        for (String s:
+             list) {
+            System.out.println(idx+". "+s);
+            idx++;
+        }
+        int option = Integer.parseInt(in.readLine());
+        if(option>list.size()){
+            System.out.println("\nInvalid option! Try again:");
+            System.out.println("Select board by number: ");
+            option = Integer.parseInt(in.readLine());
+        }
+        return list.get(option-1);
     }
 }

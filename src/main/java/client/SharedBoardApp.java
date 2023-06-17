@@ -1,5 +1,6 @@
 package client;
 
+import client.ui.CreatePostItUI;
 import client.ui.ShareBoardUI;
 import messageUtils.MessageService;
 import messageUtils.SBPMessage;
@@ -75,11 +76,11 @@ public class SharedBoardApp {
         String option;
 
         do {
-            System.out.println("Main Menu:\n");
+            System.out.println("\nMain Menu:\n");
             System.out.println("1 - Send a test request");
             System.out.println("2 - Share a board");
             System.out.println("3 - Archive a board");
-            //System.out.println("4 - Create a post-it");
+            System.out.println("4 - Create a post-it");
             //System.out.println("5 - Update a post-it");
             System.out.println("0 - Logout");
 
@@ -99,9 +100,9 @@ public class SharedBoardApp {
                 case "3":
                     //new ArchiveBoardUI(sOut, sIn, messageService).show();
                     break;
-                //case "4":
-                    //new CreatePostItIU(in, sOut, sIn).run();
-                    //break;
+                case "4":
+                    new CreatePostItUI(in, sOut, sIn).run();
+                    break;
                 //case "5":
                     //new EditPostItIU(in, sOut, sIn).run();
                    // break;

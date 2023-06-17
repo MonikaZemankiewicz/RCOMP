@@ -16,6 +16,7 @@ public class SharedBoardServer {
 
         try {
             sock = new ServerSocket(SharedConstants.DEFAULT_PORT);
+            System.out.println("Server running. Address: 127.0.0.1:"+sock.getLocalPort());
         }
         catch (IOException e){
             System.out.println("Failed TCP connection");
