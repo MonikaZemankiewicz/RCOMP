@@ -1,5 +1,7 @@
 package server;
 
+import boardService.PostItInfo;
+import com.google.gson.stream.JsonReader;
 import messageUtils.MessageService;
 import messageUtils.SBPMessage;
 import messageUtils.SharedConstants;
@@ -8,8 +10,15 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+
+
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class SharedBoardServerThread implements Runnable {
 
@@ -221,6 +230,7 @@ public class SharedBoardServerThread implements Runnable {
 
         //Below data should be saved in the database
 
+
         System.out.println("boardName: ");
         System.out.println(boardName);
         String[] splittedUserInfo = positionData.split(";");
@@ -230,6 +240,28 @@ public class SharedBoardServerThread implements Runnable {
         System.out.println(splittedUserInfo[1]);
         System.out.println("text: ");
         System.out.println(text);
+
+
+        /*
+        PostItInfo postit = new PostItInfo(boardName, text, Integer.parseInt(splittedUserInfo[0]), Integer.parseInt(splittedUserInfo[1]));
+
+        PostItInfo [] allPostits = new PostItInfo[] {};
+
+
+
+
+        //send
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String json = gson.toJson(allPostits);
+
+        // Write the JSON to a file
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("Postits.json"))) {
+            writer.write(json);
+            System.out.println("JSON file generated successfully.");
+        } catch (IOException e) {
+            System.out.println("Error generating JSON file: " + e.getMessage());
+        }
+        */
 
 
         responseMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.CREATE_POST_IT_RESPONSE_CODE, "\nThe post it was created successfully!\n");
