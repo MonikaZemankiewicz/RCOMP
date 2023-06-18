@@ -1,15 +1,16 @@
 package client.ui;
 
-import java.io.*;
-import java.util.Arrays;
+import client.SharedBoardApp;
+import messageUtils.SBPMessage;
+
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
-import static postitService.uploadImage.uploadImage;
-import static postitService.uploadText.uploadText;
-
 public class CreatePostItUI implements Runnable {
-
-    static final int ACK_CODE = 2;
     static final int ERR_CODE = 3;
 
     BufferedReader in;
@@ -25,53 +26,57 @@ public class CreatePostItUI implements Runnable {
     @Override
     public void run() {
         try {
-            String board = showAndSelectBoard(in);
-            UploadContent(in, board);
-        } catch (Exception e) {
-            System.out.println("Error" + e.getMessage());
-        }
+            String selectedBoard = showAndSelectBoard(in); //select board
 
+            String selectedCell = selectCell(in); // chose cell position
+
+            String text = inputText(in);
+
+            String dataToSend = selectedBoard + "\0" + selectedCell + "\0" + text;
+            SBPMessage createPostItMessage = SharedBoardApp.createPostItRequest(in, sOut, sIn, dataToSend);
+            System.out.println(createPostItMessage.data());
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    public static String inputText(BufferedReader in) throws IOException {
+        String data ="";
+        do {
+            try{
+                System.out.println("\nEnter the post it text: ");
+                String input = in.readLine();
+
+                data = data.concat(input + "\0");
+
+                return data;
+
+            } catch(Exception e) {
+                System.out.println("\nInvalid option. Please, try again:");
+            }
+
+        } while(true);
     }
     public static String selectCell(BufferedReader in) throws IOException {
         String data = "";
-        String readPermissions;
-        String writePermissions;
         do {
-            System.out.println("\nEnter the row number: ");
-            String row = in.readLine();
+            try {
+                System.out.println("\nEnter the row number: ");
+                String row = in.readLine();
 
-            System.out.println("\nEnter the column number: ");
-            String column = in.readLine();
+                System.out.println("\nEnter the column number: ");
+                String column = in.readLine();
 
-            data = data.concat(row + ";" + column +"\0");
+                data = data.concat(row + ";" + column +"\0");
 
             return data;
+            } catch(Exception e) {
+                System.out.println("\nInvalid option. Please, try again:");
+            }
 
         } while(true);
     }
 
-    public static void UploadContent(BufferedReader in, String board) throws Exception{
-        System.out.println("Select content type: \n1. Text\n2. Image");
-        int option = in.read();
-        if(option>2){
-            System.out.println("\nInvalid option! Try again:");
-            System.out.println("Select content type: \n1. Text\n2. Image");
-            option = in.read();
-
-            switch (option){
-                case 1:
-                    uploadText();
-                    break;
-                case 2:
-                    uploadImage();
-                    break;
-                default:
-                    break;
-            }
-        }
-
-
-    }
     public static String showAndSelectBoard(BufferedReader in) throws Exception{
         File dir = new File(".");
         List<String> list = Arrays.asList(dir.list(
