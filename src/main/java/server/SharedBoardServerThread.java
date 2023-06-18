@@ -61,6 +61,11 @@ public class SharedBoardServerThread implements Runnable {
                         System.out.println("Share board request coming from " + clientIP.getHostAddress() + ", port number " + s.getPort());
                         shareBoardResponse(message, sOut, sIn);
                         break;
+
+                    case SharedConstants.CREATE_POST_IT_REQUEST_CODE:
+                        System.out.println("Create Post It request coming from " + clientIP.getHostAddress() + ", port number " + s.getPort());
+                        createPostItResponse(message, sOut, sIn);
+                        break;    
                 }
             } while (true);
         } catch (IOException ex) {
@@ -164,6 +169,65 @@ public class SharedBoardServerThread implements Runnable {
         //finally send response
         messageService.sendMessage(responseMessage, sOut);
     }
+
+    public static void createPostItResponse(SBPMessage message, DataOutputStream sOut, DataInputStream sIn) throws IOException {
+        SBPMessage responseMessage;
+        char currentChar;
+        int currentCharIndex = 0;
+
+        String boardName = "";
+        String positionData = "";
+        String text = "";
+
+        while ((currentChar = message.data().charAt(currentCharIndex)) != '\0') {
+            boardName = boardName.concat(String.valueOf(currentChar));
+            currentCharIndex++;
+        }
+
+        currentCharIndex++;
+
+
+
+        while ((currentChar = message.data().charAt(currentCharIndex)) != '\0') {
+            positionData = positionData.concat(String.valueOf(currentChar));
+            currentCharIndex++;
+
+        }
+
+        currentCharIndex++;
+
+
+
+
+        do {
+            while ((currentChar = message.data().charAt(currentCharIndex)) != '\0') {
+                text = text.concat(String.valueOf(currentChar));
+                currentCharIndex++;
+            }
+            currentCharIndex++;
+
+        } while (currentCharIndex < (message.d_length_1() + message.d_length_2()));
+
+        //Below data should be saved in the database
+
+        System.out.println("boardName: ");
+        System.out.println(boardName);
+        String[] splittedUserInfo = positionData.split(";");
+        System.out.println("row: ");
+        System.out.println(splittedUserInfo[0]);
+        System.out.println("column: ");
+        System.out.println(splittedUserInfo[1]);
+        System.out.println("text: ");
+        System.out.println(text);
+
+
+        responseMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.CREATE_POST_IT_RESPONSE_CODE, "\nThe post it was created successfully!\n");
+
+        //finally send response
+        messageService.sendMessage(responseMessage, sOut);
+
+    }
+
 
     protected static void sendMessage(SBPMessage message, DataOutputStream sOut) {
         try {
