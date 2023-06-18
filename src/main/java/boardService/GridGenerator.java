@@ -3,28 +3,30 @@ package boardService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.sql.SQLOutput;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 import static boardService.HTMLFileOpener.openFile;
+import static postitService.CreatePostit.postContent;
 
 public class GridGenerator {
+
+
+    private static BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     public static void generateHTMLGrid(int rows, int cols, String name, String title) {
-        String path = name.replaceAll("\\s","");
+
         StringBuilder html = new StringBuilder();
         html.append("<!DOCTYPE html>\n");
         html.append("<html>\n");
         html.append("<head>\n");
         html.append("<title>"+name+"</title>\n");
-        html.append("<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js\"></script>\n");
-
         // STYLEING
         html.append("<script src=\"script.js\"></script>\n");
         html.append("<style>\n");
@@ -105,32 +107,36 @@ public class GridGenerator {
  */
 
         // SCRIPTING
+        html.append("<script src=\"https://code.jquery.com/jquery-3.6.0.min.js\"></script>\n");
         html.append("<script>\n");
-        html.append("function updateCellContent(cellId, text) {\n");
-        html.append("  var cellElement = document.getElementById(cellId);\n");
-        html.append("  cellElement.innerText = text;\n");
-        html.append("}\n");
-        html.append("function fetchCellContent() {\n");
-        html.append("  fetch('"+path+".json')\n");
-        html.append("    .then(response => response.json())\n");
-        html.append("    .then(data => {\n");
-        html.append("      data.cells.forEach(cell => {\n");
-        html.append("        var cellId = 'grid-item-' + cell.id;\n");
-        html.append("        var text = cellContents[cellId];\n");
-        html.append("        if (text) {\n");
-        html.append("          updateCellContent(cellId, text);\n");
-        html.append("        }\n");
+        html.append("$(document).ready(function() {\n");
+        html.append("  loadCells();\n");
+        html.append("});\n");
+        html.append("function loadCells() {\n");
+        html.append("  $.ajax({\n");
+        html.append("    url: 'board.json',\n");
+        html.append("    type: 'GET',\n");
+        html.append("    dataType: 'json',\n");
+        html.append("    success: function(data) {\n");
+        html.append("      var cells = data.cells;\n");
+        html.append("      $.each(cells, function(index, cell) {\n");
+        html.append("        var cellId = cell.id;\n");
+        html.append("        var content = cell.content;\n");
+        html.append("        var cellElement = $('#grid-item-' + cellId);\n");
+        html.append("        cellElement.html(content);\n");
         html.append("      });\n");
-        html.append("    });\n");
+        html.append("    },\n");
+        html.append("    error: function(jqXHR, textStatus, errorThrown) {\n");
+        html.append("      console.log('Error loading cells: ' + errorThrown);\n");
+        html.append("    }\n");
+        html.append("  });\n");
         html.append("}\n");
-        html.append("fetchCellContent();\n");
         html.append("</script>\n");
 
         html.append("</head>\n");
         html.append("<body>\n");
         html.append("<h1 align=\"center\">"+title+"</h1>");
         html.append("<div class=\"grid\">\n");
-
         int id = 1;
         int rowId = 1;
         int colId = 1;
@@ -153,11 +159,11 @@ public class GridGenerator {
 
             }
         }
-
         html.append("</div>\n");
         html.append("</body>\n");
         html.append("</html>");
-        path = path+".html";
+
+        String path = name.replaceAll("\\s","")+".html";
         // Write the HTML to a file
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
             writer.write(html.toString());
@@ -168,15 +174,7 @@ public class GridGenerator {
         generateJSON(name, title, rows, cols);
         openFile(path);
 
-        System.out.println("Add content:");
-        Scanner sc = new Scanner(System.in);
-        System.out.println("ID of cell: ");
-        int idx = sc.nextInt();
-        sc.nextLine();
-        System.out.println("Content to put: ");
-        String content = sc.nextLine();
-        System.out.println("Image URL to put: ");
-        String url = sc.nextLine();
+        updateCellContent(name);
         //editHTMLGrid(path, String.valueOf(idx), content, url);
     }
     public static void generateJSON(String boardName, String title, int rows, int cols) {
@@ -205,54 +203,41 @@ public class GridGenerator {
             System.out.println("Error generating JSON file: " + e.getMessage());
         }
     }
-    /*
+    public static void updateCellContent(String path) {
+        // Read the initial data
+        Scanner sc = new Scanner(System.in);
+        System.out.println("ID of cell: ");
+        int cellId = Integer.parseInt(sc.nextLine());
+        System.out.println("Content of postit: ");
+        String content = sc.nextLine();
 
-    public static void editHTMLGrid(String path, String cellId, String cellText, String imageUrl) {
-        File htmlFile = new File(path);
-
+        // Read the JSON file and update the content
+        Gson gson = new Gson();
         try {
-            // Read the HTML file content
-            String htmlContent = Files.readString(htmlFile.toPath(), StandardCharsets.UTF_8);
-
-            // Replace the text and image URL of the specified cell using JavaScript function
-            String replacement = "<script>updateCellContent(\"" + cellId + "\", \"" + cellText + "\", \"" + imageUrl + "\");</script>";
-            htmlContent = htmlContent.replaceAll("</body>", replacement + "</body>");
-
-            // Write the updated HTML to the file
-            Path filePath = htmlFile.toPath();
-            Files.writeString(filePath, htmlContent, StandardCharsets.UTF_8, StandardOpenOption.TRUNCATE_EXISTING);
-
-        } catch (IOException e) {
-            System.out.println("Error editing HTML grid: " + e.getMessage());
-        }
-    }
-
-    public static void updateCellContent(String cellId, String text) {
-        .put(cellId, text);
-
-        // Update the JSON file with the new cell content
-        try {
-            String json = Files.readString(Path.of("board.json"), StandardCharsets.UTF_8);
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            String json = Files.readString(Path.of(path+".json"), StandardCharsets.UTF_8);
             BoardInfo boardInfo = gson.fromJson(json, BoardInfo.class);
+            CellInfo[] cells = boardInfo.getCells();
 
-            for (CellInfo cell : boardInfo.getCells()) {
-                if (("grid-item-" + cell.getId()).equals(cellId)) {
-                    cell.setContent(text);
+            for (CellInfo cell : cells) {
+                if (cell.getId() == cellId) {
+                    cell.setContent(content);
+                    break;
+                }else if(cellId > cells.length){
+                    System.out.println("No cell with this id!");
                     break;
                 }
             }
 
             String updatedJson = gson.toJson(boardInfo);
-            Files.writeString(Path.of("board.json"), updatedJson, StandardCharsets.UTF_8, StandardOpenOption.TRUNCATE_EXISTING);
+
+            // Write the updated JSON back to the file
+            Files.writeString(Path.of(path+".json"), updatedJson, StandardCharsets.UTF_8, StandardOpenOption.WRITE);
 
             System.out.println("Cell content updated successfully.");
         } catch (IOException e) {
             System.out.println("Error updating cell content: " + e.getMessage());
         }
     }
-
-     */
 }
 
 

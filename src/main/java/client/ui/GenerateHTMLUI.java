@@ -17,7 +17,6 @@ public class GenerateHTMLUI {
         System.out.print("Enter the name of board: ");
         scanner.nextLine();
         String name = scanner.nextLine();
-
         System.out.print("Enter the title of board: ");
         String title = scanner.nextLine();
         File f = new File(name.replaceAll("\\s","")+".html");
@@ -26,7 +25,6 @@ public class GenerateHTMLUI {
             name = scanner.nextLine();
             f = new File(name.replaceAll("\\s","")+".html");
         }
-        scanner.close();
         generateHTMLGrid(rows, cols, name, title);
     }
 }
