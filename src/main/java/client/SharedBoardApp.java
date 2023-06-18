@@ -2,6 +2,7 @@ package client;
 
 import client.ui.CreatePostItUI;
 import client.ui.ShareBoardUI;
+import client.ui.UpdatePostItUI;
 import messageUtils.MessageService;
 import messageUtils.SBPMessage;
 import messageUtils.SharedConstants;
@@ -44,7 +45,7 @@ public class SharedBoardApp {
 
         do {
             System.out.println("Please, choose an option:\n");
-            System.out.println("1 - Login");
+            System.out.println("1 - Menu");
             System.out.println("2 - Exit");
 
             option = in.readLine();
@@ -76,12 +77,12 @@ public class SharedBoardApp {
         String option;
 
         do {
-            System.out.println("\nMain Menu:\n");
+            System.out.println("Main Menu:\n");
             System.out.println("1 - Send a test request");
             System.out.println("2 - Share a board");
-            System.out.println("3 - Archive a board");
+            //System.out.println("3 - Archive a board");
             System.out.println("4 - Create a post-it");
-            //System.out.println("5 - Update a post-it");
+            System.out.println("5 - Update a post-it");
             System.out.println("0 - Logout");
 
             option = in.readLine();
@@ -104,8 +105,8 @@ public class SharedBoardApp {
                     new CreatePostItUI(in, sOut, sIn).run();
                     break;
                 //case "5":
-                    //new EditPostItIU(in, sOut, sIn).run();
-                   // break;
+                    //new UpdatePostItUI(in, sOut, sIn).run();
+                    //break;
                 default:
                     System.out.println("\nInvalid option.\n");
                     break;
@@ -145,6 +146,12 @@ public class SharedBoardApp {
 
     public static SBPMessage shareBoardRequest(BufferedReader in, DataOutputStream sOut, DataInputStream sIn, String data) throws IOException {
         SBPMessage requestMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.SHARE_BOARD_REQUEST_CODE, data); //send message
+        messageService.sendMessage(requestMessage, sOut);
+        return readResponse(sIn); //read response
+    }
+
+    public static SBPMessage createPostItRequest(BufferedReader in, DataOutputStream sOut, DataInputStream sIn, String data) throws IOException {
+        SBPMessage requestMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.CREATE_POST_IT_REQUEST_CODE, data); //send message
         messageService.sendMessage(requestMessage, sOut);
         return readResponse(sIn); //read response
     }
