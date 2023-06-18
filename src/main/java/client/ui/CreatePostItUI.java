@@ -26,7 +26,7 @@ public class CreatePostItUI implements Runnable {
     @Override
     public void run() {
         try {
-            SBPMessage ownedBoardsMessage = SharedBoardApp.ownedBoardsRequest(in, sOut, sIn); //request all owned board by user
+            SBPMessage ownedBoardsMessage = SharedBoardApp.ownedBoardsRequest(sOut, sIn); //request all owned board by user
 
             if(ownedBoardsMessage.code() == ERR_CODE) {       //verify message code
                 throw new RuntimeException(ownedBoardsMessage.data());

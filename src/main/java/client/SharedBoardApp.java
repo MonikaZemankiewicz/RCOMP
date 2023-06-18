@@ -1,8 +1,8 @@
 package client;
 
+import client.httpServer.SimpleHttpServer;
 import client.ui.CreatePostItUI;
 import client.ui.ShareBoardUI;
-import client.ui.UpdatePostItUI;
 import messageUtils.MessageService;
 import messageUtils.SBPMessage;
 import messageUtils.SharedConstants;
@@ -52,6 +52,7 @@ public class SharedBoardApp {
             switch(option) {
                 case "1":
                         loggedUserMenu(in, sOut, sIn);
+                        startHttpServer(sOut, sIn);
                     break;
 
                 case "2":
@@ -138,7 +139,7 @@ public class SharedBoardApp {
         return readMessage(sIn).code() == SharedConstants.ACK_CODE; //read response
     }
 
-    public static SBPMessage ownedBoardsRequest(BufferedReader in, DataOutputStream sOut, DataInputStream sIn) throws IOException {
+    public static SBPMessage ownedBoardsRequest(DataOutputStream sOut, DataInputStream sIn) throws IOException {
         SBPMessage requestMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.OWNED_BOARDS_REQUEST_CODE, "");  //send message
         messageService.sendMessage(requestMessage, sOut);
         return readResponse(sIn);  //read response
@@ -191,6 +192,14 @@ public class SharedBoardApp {
         }
         return null;
     }
+
+    public static void startHttpServer(DataOutputStream sOut, DataInputStream sIn) throws IOException {
+
+    }
 }
+
+
+
+
 
 
