@@ -28,12 +28,25 @@ public class ShareBoardUI implements Runnable {
 
     @Override
     public void run() {
-        enterBoardData(in);
+        String data = enterBoardData(in);
+        try{
+            SBPMessage shareBoardMessage = SharedBoardApp.shareBoardRequest(in, sOut, sIn, data);
+            if(shareBoardMessage.code() == ERR_CODE) {
+                throw new RuntimeException(shareBoardMessage.data());
+            }
+
+
+
+
+        }catch (Exception e){
+            System.out.println("Error: "+e.getMessage());
+        }
+
     }
-    public static void enterBoardData(BufferedReader in){
+    public static String enterBoardData(BufferedReader in){
         int rows = 0;
         int cols = 0;
-        String name = "";
+        String name = "", title = "";
         while((rows == 0 || rows > 20) || (cols == 0 || cols > 10)) {
             try {
                 System.out.print("Enter the number of rows (1-20): ");
@@ -42,6 +55,8 @@ public class ShareBoardUI implements Runnable {
                 cols = Integer.parseInt(in.readLine());
                 System.out.print("Enter the name of board: ");
                 name = in.readLine();
+                System.out.print("Enter the title of board: ");
+                title = in.readLine();
                 File f = new File(name.replaceAll("\\s","")+".html");
                 while(f.exists()){
                     System.out.println("Board with name: "+name+" exists. Try a new one:");
@@ -52,8 +67,11 @@ public class ShareBoardUI implements Runnable {
                 System.out.println("Error"+e.getMessage());
             }
         }
-        generateHTMLGrid(rows, cols, name);
+        generateHTMLGrid(rows, cols, name, title);
+        return name+";"+title+";"+rows+";"+cols;
     }
+
+    /*
     public static String selectUsersToShare(BufferedReader in) throws IOException {
         String data = "";
         String readPermissions;
@@ -121,4 +139,6 @@ public class ShareBoardUI implements Runnable {
             }
         } while(true);
     }
+    */
 }
+

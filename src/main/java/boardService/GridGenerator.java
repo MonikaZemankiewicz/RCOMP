@@ -17,7 +17,7 @@ import static boardService.HTMLFileOpener.openFile;
 
 public class GridGenerator {
     public static void generateHTMLGrid(int rows, int cols, String name, String title) {
-        String path = name.replaceAll("\\s","")
+        String path = name.replaceAll("\\s","");
         StringBuilder html = new StringBuilder();
         html.append("<!DOCTYPE html>\n");
         html.append("<html>\n");
@@ -177,7 +177,7 @@ public class GridGenerator {
         String content = sc.nextLine();
         System.out.println("Image URL to put: ");
         String url = sc.nextLine();
-        editHTMLGrid(path, String.valueOf(idx), content, url);
+        //editHTMLGrid(path, String.valueOf(idx), content, url);
     }
     public static void generateJSON(String boardName, String title, int rows, int cols) {
         BoardInfo boardInfo = new BoardInfo();
@@ -205,6 +205,7 @@ public class GridGenerator {
             System.out.println("Error generating JSON file: " + e.getMessage());
         }
     }
+    /*
 
     public static void editHTMLGrid(String path, String cellId, String cellText, String imageUrl) {
         File htmlFile = new File(path);
@@ -250,6 +251,8 @@ public class GridGenerator {
             System.out.println("Error updating cell content: " + e.getMessage());
         }
     }
+
+     */
 }
 
 
