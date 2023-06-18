@@ -65,7 +65,7 @@ public class SharedBoardServerThread implements Runnable {
                     case SharedConstants.CREATE_POST_IT_REQUEST_CODE:
                         System.out.println("Create Post It request coming from " + clientIP.getHostAddress() + ", port number " + s.getPort());
                         createPostItResponse(message, sOut, sIn);
-                        break;    
+                        break;
                 }
             } while (true);
         } catch (IOException ex) {
@@ -118,7 +118,8 @@ public class SharedBoardServerThread implements Runnable {
             String data = "";
 
 
-            data = data.concat("Random title" + "\0");
+            data = data.concat("Random title 1" + "\0");
+            data = data.concat("Random title 2" + "\0");
 
 
             responseMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.OWNED_BOARDS_RESPONSE_CODE, data);
@@ -227,7 +228,6 @@ public class SharedBoardServerThread implements Runnable {
         messageService.sendMessage(responseMessage, sOut);
 
     }
-
 
     protected static void sendMessage(SBPMessage message, DataOutputStream sOut) {
         try {
