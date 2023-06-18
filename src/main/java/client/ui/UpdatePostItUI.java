@@ -10,14 +10,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CreatePostItUI implements Runnable {
+public class UpdatePostItUI implements Runnable {
     static final int ERR_CODE = 3;
 
     BufferedReader in;
     DataInputStream sIn;
     DataOutputStream sOut;
 
-    public CreatePostItUI(BufferedReader in, DataOutputStream sOut, DataInputStream sIn) {
+    public UpdatePostItUI(BufferedReader in, DataOutputStream sOut, DataInputStream sIn) {
         this.in = in;
         this.sIn = sIn;
         this.sOut = sOut;
@@ -50,7 +50,7 @@ public class CreatePostItUI implements Runnable {
         String data ="";
         do {
             try{
-                System.out.println("\nEnter the post it text: ");
+                System.out.println("\nEnter the new post it text: ");
                 String input = in.readLine();
 
                 data = data.concat(input + "\0");

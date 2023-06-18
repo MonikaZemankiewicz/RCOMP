@@ -4,12 +4,12 @@ import messageUtils.MessageService;
 import messageUtils.SBPMessage;
 import messageUtils.SharedConstants;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.Arrays;
+import java.util.List;
 
 public class SharedBoardServerThread implements Runnable {
 
@@ -114,15 +114,25 @@ public class SharedBoardServerThread implements Runnable {
     public static void ownedBoardsResponse(DataOutputStream sOut, DataInputStream sIn) throws IOException {
         SBPMessage responseMessage;
 
+        File dir = new File(".");
+        List<String> list = Arrays.asList(dir.list(
+                new FilenameFilter() {
+                    @Override public boolean accept(File dir, String name) {
+                        return name.endsWith(".html");
+                    }
+                }
+        ));
 
-            String data = "";
+        String data = "";
+        int idx = 1;
+        for (String s:
+                list) {
+            data = data.concat(s + "\0");
+            idx++;
+        }
 
 
-            data = data.concat("Random title 1" + "\0");
-            data = data.concat("Random title 2" + "\0");
-
-
-            responseMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.OWNED_BOARDS_RESPONSE_CODE, data);
+        responseMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.OWNED_BOARDS_RESPONSE_CODE, data);
 
         //send response
         messageService.sendMessage(responseMessage, sOut);

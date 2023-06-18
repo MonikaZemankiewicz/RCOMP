@@ -13,7 +13,11 @@ public class SharedConstants {
     public static final int SHARE_BOARD_RESPONSE_CODE = 8;
     public static final int FIND_OWNED_BOARDS_CODE = 9;
     public static final int ARCHIVE_BOARD_CODE = 10;
-    public static final int CURRENT_MAX_CODE = 10;
+    public static final int CREATE_POST_IT_REQUEST_CODE = 11;
+    public static final int CREATE_POST_IT_RESPONSE_CODE = 12;
+    public static final int UPDATE_POST_IT_REQUEST_CODE = 13;
+    public static final int UPDATE_POST_IT_RESPONSE_CODE = 14;
+    public static final int CURRENT_MAX_CODE = 14;
     public static final int MESSAGE_VERSION = 1;
     public static final int DEFAULT_PORT = 9999;
     public static final int TIMEOUT = 5;
