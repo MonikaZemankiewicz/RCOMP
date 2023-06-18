@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CreatePostItUI implements Runnable {
-
-    static final int ACK_CODE = 2;
     static final int ERR_CODE = 3;
 
     BufferedReader in;
@@ -28,38 +26,53 @@ public class CreatePostItUI implements Runnable {
     @Override
     public void run() {
         try {
-            SBPMessage ownedBoardsMessage = SharedBoardApp.ownedBoardsRequest(in, sOut, sIn); //request all owned board by user
-
-            if(ownedBoardsMessage.code() == ERR_CODE) {       //verify message code
-                throw new RuntimeException(ownedBoardsMessage.data());
-            }
-
-            String selectedBoard = showAndSelectBoard(ownedBoardsMessage, in); //select board
+            String selectedBoard = showAndSelectBoard(in); //select board
 
             String selectedCell = selectCell(in); // chose cell position
 
-            String dataToSend = selectedBoard + "\0" + selectedCell;
-            SBPMessage createPostItMessage = SharedBoardApp.shareBoardRequest(in, sOut, sIn, dataToSend);
+            String text = inputText(in);
+
+            String dataToSend = selectedBoard + "\0" + selectedCell + "\0" + text;
+            SBPMessage createPostItMessage = SharedBoardApp.createPostItRequest(in, sOut, sIn, dataToSend);
             System.out.println(createPostItMessage.data());
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
+    public static String inputText(BufferedReader in) throws IOException {
+        String data ="";
+        do {
+            try{
+                System.out.println("\nEnter the post it text: ");
+                String input = in.readLine();
+
+                data = data.concat(input + "\0");
+
+                return data;
+
+            } catch(Exception e) {
+                System.out.println("\nInvalid option. Please, try again:");
+            }
+
+        } while(true);
+    }
     public static String selectCell(BufferedReader in) throws IOException {
         String data = "";
-        String readPermissions;
-        String writePermissions;
         do {
-            System.out.println("\nEnter the row number: ");
-            String row = in.readLine();
+            try {
+                System.out.println("\nEnter the row number: ");
+                String row = in.readLine();
 
-            System.out.println("\nEnter the column number: ");
-            String column = in.readLine();
+                System.out.println("\nEnter the column number: ");
+                String column = in.readLine();
 
-            data = data.concat(row + ";" + column +"\0");
+                data = data.concat(row + ";" + column +"\0");
 
-            return data;
+                return data;
+            } catch(Exception e) {
+                System.out.println("\nInvalid option. Please, try again:");
+            }
 
         } while(true);
     }
