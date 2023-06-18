@@ -17,6 +17,9 @@ public class GenerateHTMLUI {
         System.out.print("Enter the name of board: ");
         scanner.nextLine();
         String name = scanner.nextLine();
+
+        System.out.print("Enter the title of board: ");
+        String title = scanner.nextLine();
         File f = new File(name.replaceAll("\\s","")+".html");
         while(f.exists()){
             System.out.println("Board with name: "+name+" exists. Try a new one:");
@@ -24,6 +27,6 @@ public class GenerateHTMLUI {
             f = new File(name.replaceAll("\\s","")+".html");
         }
         scanner.close();
-        generateHTMLGrid(rows, cols, name);
+        generateHTMLGrid(rows, cols, name, title);
     }
 }
