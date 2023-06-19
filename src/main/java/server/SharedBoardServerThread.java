@@ -49,10 +49,6 @@ public class SharedBoardServerThread implements Runnable {
         System.out.println("New client connection from " + clientIP.getHostAddress() +
                 ", port number " + s.getPort());
 
-        SimpleHttpServer server = new SimpleHttpServer();
-        server.run();
-        System.out.println("HTTP Server started");
-
         try {
             sOut = new DataOutputStream(s.getOutputStream());
             sIn = new DataInputStream(s.getInputStream());

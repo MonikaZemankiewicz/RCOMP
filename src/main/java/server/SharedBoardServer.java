@@ -1,5 +1,6 @@
 package server;
 
+import client.httpServer.SimpleHttpServer;
 import messageUtils.SharedConstants;
 
 
@@ -22,10 +23,17 @@ public class SharedBoardServer {
             System.out.println("Failed TCP connection");
             System.exit(1);
         }
+        boolean alreadyExecuted = false;
         while(true) {
             try{
                 cliSock=sock.accept();
                 new Thread(new SharedBoardServerThread(cliSock)).start();
+                if(!alreadyExecuted){
+                    SimpleHttpServer server = new SimpleHttpServer();
+                    server.run();
+                    System.out.println("HTTP Server started");
+                    alreadyExecuted = true;
+                }
             }
             catch (IOException e){
                 System.out.println("Could not establish connection, because of the error: "+e.getMessage());

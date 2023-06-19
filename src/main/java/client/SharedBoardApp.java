@@ -43,7 +43,7 @@ public class SharedBoardApp {
         DataInputStream sIn = new DataInputStream(sock.getInputStream());
         messageService = new MessageService();
 
-
+        /*
         try{
             // Authenticate client
             System.out.println("[Login]");
@@ -56,7 +56,7 @@ public class SharedBoardApp {
             System.out.println("Error after authentication...");
             e.printStackTrace();}
 
-
+        */
         messageService = new MessageService();
         String option;
         System.out.println("Welcome!");
