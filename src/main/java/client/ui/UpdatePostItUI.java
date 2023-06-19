@@ -3,10 +3,12 @@ package client.ui;
 import client.SharedBoardApp;
 import messageUtils.SBPMessage;
 
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,30 +27,56 @@ public class UpdatePostItUI implements Runnable {
 
     @Override
     public void run() {
-        /*
-        try {
+        String option;
+        do {
+            System.out.println("Choose the action:\n");
+            System.out.println("1 - Update text");
+            System.out.println("2 - Update url");
+            System.out.println("3 - Move to a different cell");
+            System.out.println("4 - Remove post it");
 
-            //SBPMessage ownedBoardsMessage = SharedBoardApp.ownedBoardsRequest(sOut, sIn); //request all owned board by user
 
-            if(ownedBoardsMessage.code() == ERR_CODE) {       //verify message code
-                throw new RuntimeException(ownedBoardsMessage.data());
+            try {
+                option = in.readLine();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
+            SBPMessage responseMessage;
+            switch(option) {
+                case "1":
+                    try {
+                        updateText(in, sOut, sIn);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    break;
+                case "2":
 
-            String selectedBoard = showAndSelectBoard(ownedBoardsMessage, in); //select board
+                    break;
+                case "3":
 
-            String selectedCell = selectCell(in); // chose cell position
+                    break;
+                case "4":
 
-            String text = inputText(in);
+                    break;
+                default:
+                    System.out.println("\nInvalid option.\n");
+                    break;
+            }
+        } while (true);
 
-            String dataToSend = selectedBoard + "\0" + selectedCell + "\0" + text;
-            SBPMessage createPostItMessage = SharedBoardApp.createPostItRequest(in, sOut, sIn, dataToSend);
-            System.out.println(createPostItMessage.data());
 
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
 
-             */
+    }
+
+    public static void updateText(BufferedReader in, DataOutputStream sOut, DataInputStream sIn) throws IOException {
+        String selectedCell = selectCell(in);
+        String newText = inputText(in);
+
+        String dataToSend = selectedCell + "\0" + newText + "\0";
+        SBPMessage updatePostItTextMessage = SharedBoardApp.updatePostItTextRequest(in, sOut, sIn, dataToSend);
+        System.out.println(updatePostItTextMessage.data());
+
     }
     public static String inputText(BufferedReader in) throws IOException {
         String data ="";

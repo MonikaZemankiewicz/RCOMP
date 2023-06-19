@@ -1,8 +1,5 @@
 package server;
 
-import boardService.PostItInfo;
-import client.httpServer.SimpleHttpServer;
-import com.google.gson.stream.JsonReader;
 import messageUtils.MessageService;
 import messageUtils.SBPMessage;
 import messageUtils.SharedConstants;
@@ -12,11 +9,7 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
+
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -74,6 +67,11 @@ public class SharedBoardServerThread implements Runnable {
                         authResponse(sOut, sIn, message);
                         break;
 
+                    case SharedConstants.OWNED_BOARDS_REQUEST_CODE:
+                        System.out.println("Owned boards request coming from " + clientIP.getHostAddress() + ", port number " + s.getPort());
+                        ownedBoardsResponse(sOut, sIn);
+                        break;
+
                     case SharedConstants.SHARE_BOARD_REQUEST_CODE:
                         System.out.println("Share board request coming from " + clientIP.getHostAddress() + ", port number " + s.getPort());
                         SBPMessage answer = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.SHARE_BOARD_RESPONSE_CODE, "http://localhost:8000/index.html");
@@ -83,6 +81,11 @@ public class SharedBoardServerThread implements Runnable {
                     case SharedConstants.CREATE_POST_IT_REQUEST_CODE:
                         System.out.println("Create Post It request coming from " + clientIP.getHostAddress() + ", port number " + s.getPort());
                         createPostItResponse(message, sOut, sIn);
+                        break;
+
+                    case SharedConstants.UPDATE_POST_IT_TEXT_REQUEST_CODE:
+                        System.out.println("Update Post It text request coming from " + clientIP.getHostAddress() + ", port number " + s.getPort());
+                        updatePostItTextResponse(message, sOut, sIn);
                         break;
                 }
             } while (true);
@@ -127,6 +130,38 @@ public class SharedBoardServerThread implements Runnable {
 
     }
 
+    public static void ownedBoardsResponse(DataOutputStream sOut, DataInputStream sIn) throws IOException {
+        SBPMessage responseMessage;
+
+        /*File dir = new File(".");
+        List<String> list = Arrays.asList(dir.list(
+                new FilenameFilter() {
+                    @Override public boolean accept(File dir, String name) {
+                        return name.endsWith(".html");
+                    }
+                }
+        ));
+        */
+
+        String data = "Board 1" + "\0";
+        data = data.concat("Board 2" + "\0");
+        /*
+        int idx = 1;
+        for (String s:
+                list) {
+            data = data.concat(s + "\0");
+            idx++;
+        }
+
+         */
+
+
+        responseMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.OWNED_BOARDS_RESPONSE_CODE, data);
+
+        //send response
+        messageService.sendMessage(responseMessage, sOut);
+    }
+
     public static void shareBoardResponse(SBPMessage message, DataOutputStream sOut, DataInputStream sIn) throws IOException {
         SBPMessage responseMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.SHARE_BOARD_RESPONSE_CODE, message.data());
         //finally send response
@@ -150,8 +185,6 @@ public class SharedBoardServerThread implements Runnable {
 
         currentCharIndex++;
 
-
-
         while ((currentChar = message.data().charAt(currentCharIndex)) != '\0') {
             positionData = positionData.concat(String.valueOf(currentChar));
             currentCharIndex++;
@@ -167,7 +200,6 @@ public class SharedBoardServerThread implements Runnable {
         }
         currentCharIndex++;
 
-
         do {
             while ((currentChar = message.data().charAt(currentCharIndex)) != '\0') {
                 url = url.concat(String.valueOf(currentChar));
@@ -177,20 +209,7 @@ public class SharedBoardServerThread implements Runnable {
 
         } while (currentCharIndex < (message.d_length_1() + message.d_length_2()));
 
-        //Below data should be saved in the database
-
-
-        System.out.println("boardName: ");
-        System.out.println(boardName);
         String[] splittedUserInfo = positionData.split(";");
-        System.out.println("row: ");
-        System.out.println(splittedUserInfo[0]);
-        System.out.println("column: ");
-        System.out.println(splittedUserInfo[1]);
-        System.out.println("text: ");
-        System.out.println(text);
-        System.out.println("url: ");
-        System.out.println(url);
 
         JSONParser jsonParser = new JSONParser();
 
@@ -237,6 +256,88 @@ public class SharedBoardServerThread implements Runnable {
 
     }
 
+    public static void updatePostItTextResponse(SBPMessage message, DataOutputStream sOut, DataInputStream sIn) throws IOException {
+        SBPMessage responseMessage;
+        char currentChar;
+        int currentCharIndex = 0;
+        String positionData = "";
+        String text = "";
+        boolean found = false;
+
+        while ((currentChar = message.data().charAt(currentCharIndex)) != '\0') {
+            positionData = positionData.concat(String.valueOf(currentChar));
+            currentCharIndex++;
+
+        }
+
+        currentCharIndex++;
+        currentCharIndex++;
+
+        do {
+            while ((currentChar = message.data().charAt(currentCharIndex)) != '\0') {
+                text = text.concat(String.valueOf(currentChar));
+                currentCharIndex++;
+            }
+            currentCharIndex++;
+
+        } while (currentCharIndex < (message.d_length_1() + message.d_length_2()));
+
+        String[] splittedUserInfo = positionData.split(";");
+
+        JSONParser jsonParser = new JSONParser();
+
+        try (FileReader reader = new FileReader("Postits.json"))
+        {
+
+            Object obj = jsonParser.parse(reader);
+            JSONArray postItsList = (JSONArray) obj;
+
+            for (int i = 0; i < postItsList.size(); ++i) {
+                JSONObject postit = (JSONObject) postItsList.get(i);
+                JSONObject postitData = (JSONObject) postit.get("postit");
+                if (postitData.get("row").toString().equals(splittedUserInfo[0].toString()) && postitData.get("column").toString().equals(splittedUserInfo[1].toString())){
+                    found = true;
+                    postItsList.remove(i);
+                    postitData.put("text", text);
+                    postit.put("postit", postitData);
+                    postItsList.add(postit);
+
+                    try (FileWriter file = new FileWriter("Postits.json")) {
+                        //We can write any JSONArray or JSONObject instance to the file
+                        file.write(postItsList.toJSONString());
+                        file.flush();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if(found){
+            responseMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.UPDATE_POST_IT_RESPONSE_CODE, "\nThe post it was updated successfully!\n");
+        } else {
+            responseMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.UPDATE_POST_IT_RESPONSE_CODE, "\nThe post it with chosen position does not exist\n");
+
+        }
+
+        //finally send response
+        messageService.sendMessage(responseMessage, sOut);
+
+
+
+
+
+    }
+
     protected static void sendMessage(SBPMessage message, DataOutputStream sOut) {
         try {
             messageService.sendMessage(message, sOut);
@@ -260,6 +361,7 @@ public class SharedBoardServerThread implements Runnable {
     }
 
 
+    /*
     private static PostItInfo parseNoteObject(JSONObject postit)
     {
 
@@ -286,4 +388,6 @@ public class SharedBoardServerThread implements Runnable {
 
         return postitToSave;
     }
+
+     */
 }

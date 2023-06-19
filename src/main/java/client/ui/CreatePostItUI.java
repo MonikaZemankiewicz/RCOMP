@@ -25,8 +25,9 @@ public class CreatePostItUI implements Runnable {
 
     @Override
     public void run() {
-        /*
+
         try {
+
             SBPMessage ownedBoardsMessage = SharedBoardApp.ownedBoardsRequest(sOut, sIn); //request all owned board by user
 
             if(ownedBoardsMessage.code() == ERR_CODE) {       //verify message code
@@ -35,6 +36,10 @@ public class CreatePostItUI implements Runnable {
 
             String selectedBoard = showAndSelectBoard(ownedBoardsMessage, in); //select board
 
+
+
+            //String selectedBoard = "Board 1";
+
             String selectedCell = selectCell(in); // chose cell position
 
             String text = inputText(in);
@@ -42,6 +47,8 @@ public class CreatePostItUI implements Runnable {
             String url = inputUrl(in);
 
             String dataToSend = selectedBoard + "\0" + selectedCell + "\0" + text + "\0" + url;
+            System.out.println(dataToSend);
+
             SBPMessage createPostItMessage = SharedBoardApp.createPostItRequest(in, sOut, sIn, dataToSend);
             System.out.println(createPostItMessage.data());
 
@@ -49,7 +56,7 @@ public class CreatePostItUI implements Runnable {
             System.out.println(e.getMessage());
         }
 
-         */
+
     }
 
     public static String inputUrl(BufferedReader in) throws IOException {
