@@ -52,7 +52,6 @@ public class SharedBoardApp {
             switch(option) {
                 case "1":
                         loggedUserMenu(in, sOut, sIn);
-                        startHttpServer(sOut, sIn);
                     break;
 
                 case "2":
@@ -193,9 +192,8 @@ public class SharedBoardApp {
         return null;
     }
 
-    public static void startHttpServer(DataOutputStream sOut, DataInputStream sIn) throws IOException {
 
-    }
+
 }
 
 

@@ -14,8 +14,6 @@ import java.util.Map;
 import java.util.Scanner;
 
 import static boardService.HTMLFileOpener.openFile;
-import static postitService.CreatePostit.postContent;
-
 public class GridGenerator {
 
 

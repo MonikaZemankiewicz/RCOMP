@@ -1,6 +1,1 @@
-{
-  "boardName": "Mynewboard.html",
-  "text": "new text",
-  "row": 1,
-  "col": 2
-}
+[{"postit":{"column":"1","row":"1","text":"Hello text","board":"Board1.html"}},{"postit":{"column":"2","row":"2","text":"Other text","board":"Board1.html"}},{"postit":{"column":"3","row":"3","text":"text","board":"Board.html"}},{"postit":{"column":"4","row":"4","text":"new text","board":"new.html"}},{"postit":{"column":"5","row":"5","text":"testing","board":"Mynewboard.html"}},{"postit":{"column":"2","row":"1","text":"1 and 2","board":"Board.html"}},{"postit":{"column":"3","row":"2","text":"2 and 3","board":"Board.html"}},{"postit":{"column":"5","row":"4","text":"4 and 5","board":"Board.html"}},{"postit":{"column":"4","row":"3","text":"3 and 4","board":"Board.html"}},{"postit":{"column":"3","row":"1","text":"1 and 3","board":"Board.html"}}]

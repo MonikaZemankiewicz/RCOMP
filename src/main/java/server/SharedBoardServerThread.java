@@ -1,6 +1,7 @@
 package server;
 
 import boardService.PostItInfo;
+import client.httpServer.SimpleHttpServer;
 import com.google.gson.stream.JsonReader;
 import messageUtils.MessageService;
 import messageUtils.SBPMessage;
@@ -14,6 +15,16 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 
 
 
@@ -37,6 +48,10 @@ public class SharedBoardServerThread implements Runnable {
         clientIP = s.getInetAddress();
         System.out.println("New client connection from " + clientIP.getHostAddress() +
                 ", port number " + s.getPort());
+
+        SimpleHttpServer server = new SimpleHttpServer();
+        server.run();
+        System.out.println("HTTP Server started");
 
         try {
             sOut = new DataOutputStream(s.getOutputStream());
@@ -241,29 +256,45 @@ public class SharedBoardServerThread implements Runnable {
         System.out.println("text: ");
         System.out.println(text);
 
+        JSONParser jsonParser = new JSONParser();
 
-        /*
-        PostItInfo postit = new PostItInfo(boardName, text, Integer.parseInt(splittedUserInfo[0]), Integer.parseInt(splittedUserInfo[1]));
+        try (FileReader reader = new FileReader("Postits.json"))
+        {
+            //Read JSON file
+            Object obj = jsonParser.parse(reader);
 
-        PostItInfo [] allPostits = new PostItInfo[] {};
+            JSONArray postItsList = (JSONArray) obj;
 
+            JSONObject postItDetails = new JSONObject();
+            postItDetails.put("board", boardName);
+            postItDetails.put("row", splittedUserInfo[0]);
+            postItDetails.put("column", splittedUserInfo[1]);
+            postItDetails.put("text", text);
 
+            JSONObject postItObject = new JSONObject();
+            postItObject.put("postit", postItDetails);
 
+            postItsList.add(postItObject);
 
-        //send
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String json = gson.toJson(allPostits);
+            try (FileWriter file = new FileWriter("Postits.json")) {
+                //We can write any JSONArray or JSONObject instance to the file
+                file.write(postItsList.toJSONString());
+                file.flush();
 
-        // Write the JSON to a file
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("Postits.json"))) {
-            writer.write(json);
-            System.out.println("JSON file generated successfully.");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         } catch (IOException e) {
-            System.out.println("Error generating JSON file: " + e.getMessage());
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
-        */
 
-
+        //SimpleHttpServer server = new SimpleHttpServer();
+        //server.run();
         responseMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.CREATE_POST_IT_RESPONSE_CODE, "\nThe post it was created successfully!\n");
 
         //finally send response
@@ -291,5 +322,31 @@ public class SharedBoardServerThread implements Runnable {
             System.exit(1);
         }
         return null;
+    }
+
+
+    private static PostItInfo parseNoteObject(JSONObject postit)
+    {
+
+        //Get employee object within list
+        JSONObject postitObject = (JSONObject) postit.get("postit");
+
+        //Get employee first name
+        String board = (String) postitObject.get("board");
+
+        //Get employee first name
+        String row = (String) postitObject.get("row");
+        int rowToSave = Integer.parseInt(row);
+
+        //Get employee last name
+        String col = (String) postitObject.get("column");
+        int colToSave = Integer.parseInt(col);
+
+        //Get employee website name
+        String text = (String) postitObject.get("text");
+
+        PostItInfo postitToSave = new PostItInfo(board, text, rowToSave, colToSave);
+
+        return postitToSave;
     }
 }
