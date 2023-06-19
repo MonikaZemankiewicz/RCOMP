@@ -93,23 +93,47 @@ public class SimpleHttpServer implements Runnable{
                     "        img {\n" +
                     "            display: block;\n" +
                     "            margin: 1rem auto;\n" +
+                    "            max-width: 100%;\n" +
                     "        }\n" +
                     "    </style>\n" +
                     "</head>\n" +
-                    "<body>\n" +
+                    "<body onload=\"refreshView()\">\n" +
                     "<script>\n" +
-                    "    var notes = [];\n" +
-                    "    var board = [];\n" +
                     "\n" +
-                    "    $.ajax({\n" +
-                    "        method: \"GET\",\n" +
-                    "        url: \"http://localhost:8000/notes\",\n" +
-                    "        success: function (response) {\n" +
-                    "            notes = JSON.parse(response);\n" +
+                    "    function refreshView() {\n" +
+                    "        var notes = [];\n" +
+                    "        var board = [];\n" +
+                    "\n" +
+                    "        let request = new XMLHttpRequest();\n" +
+                    "\n" +
+                    "\n" +
+                    "        request.onload = function() {\n" +
+                    "            notes = JSON.parse(this.responseText);\n" +
+                    "            document.body.innerHTML='';\n" +
                     "            generateTable(board, notes);\n" +
-                    "        },\n" +
-                    "    });\n" +
+                    "            setTimeout(refreshView, 2000);\n" +
+                    "        };\n" +
                     "\n" +
+                    "        request.ontimeout = function() {\n" +
+                    "            var header = document.createElement(\"h1\");\n" +
+                    "            var headerText = document.createTextNode(\"Server timeout, still trying...\");\n" +
+                    "            header.appendChild(headerText);\n" +
+                    "            document.body.appendChild(header);\n" +
+                    "            setTimeout(refreshView, 100);\n" +
+                    "        };\n" +
+                    "\n" +
+                    "        request.onerror = function() {\n" +
+                    "            var header = document.createElement(\"h1\");\n" +
+                    "            var headerText = document.createTextNode(\"No server reply, still trying...\");\n" +
+                    "            header.appendChild(headerText);\n" +
+                    "            document.body.appendChild(header);\n" +
+                    "            setTimeout(refreshView, 5000);\n" +
+                    "        };\n" +
+                    "\n" +
+                    "        request.open(\"GET\", \"http://localhost:8000/notes\", true);\n" +
+                    "        request.timeout = 5000;\n" +
+                    "        request.send();\n" +
+                    "    }\n" +
                     "    function generateTable(board, notes) {\n" +
                     "        // creates a <table> element and a <tbody> element\n" +
                     "        const tbl = document.createElement(\"table\");\n" +
@@ -128,17 +152,19 @@ public class SimpleHttpServer implements Runnable{
                     "                // the end of the table row\n" +
                     "                const cell = document.createElement(\"td\");\n" +
                     "                let cellText = document.createTextNode(\"\");\n" +
-                    "                //let cellImg = document.createElement(\"img\");\n" +
+                    "                let cellImg = document.createElement(\"img\");\n" +
                     "                /*if (count <= notes.length) {\n" +
                     "                    cellText = document.createTextNode(notes[count - 1].postit.text);\n" +
-                    "                    //cellImg.src = notes[count - 1].image;\n" +
+                    "                    cellImg.src = notes[count - 1].image;\n" +
                     "                    cell.appendChild(cellText);\n" +
-                    "                    //cell.appendChild(cellImg);\n" +
+                    "                    cell.appendChild(cellImg);\n" +
                     "                }*/\n" +
                     "                notes.map(note => {\n" +
                     "                    if(parseInt(note.postit.row) == i && parseInt(note.postit.column) == j){\n" +
                     "                        cellText = document.createTextNode(note.postit.text);\n" +
+                    "                        cellImg.src = note.postit.url;\n" +
                     "                        cell.appendChild(cellText);\n" +
+                    "                        cell.appendChild(cellImg);\n" +
                     "                    }\n" +
                     "\n" +
                     "                })\n" +

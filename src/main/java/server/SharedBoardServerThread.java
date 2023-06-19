@@ -213,6 +213,7 @@ public class SharedBoardServerThread implements Runnable {
         String boardName = "";
         String positionData = "";
         String text = "";
+        String url = "";
 
         while ((currentChar = message.data().charAt(currentCharIndex)) != '\0') {
             boardName = boardName.concat(String.valueOf(currentChar));
@@ -230,13 +231,18 @@ public class SharedBoardServerThread implements Runnable {
         }
 
         currentCharIndex++;
+        currentCharIndex++;
 
-
+        while ((currentChar = message.data().charAt(currentCharIndex)) != '\0') {
+            text = text.concat(String.valueOf(currentChar));
+            currentCharIndex++;
+        }
+        currentCharIndex++;
 
 
         do {
             while ((currentChar = message.data().charAt(currentCharIndex)) != '\0') {
-                text = text.concat(String.valueOf(currentChar));
+                url = url.concat(String.valueOf(currentChar));
                 currentCharIndex++;
             }
             currentCharIndex++;
@@ -255,6 +261,8 @@ public class SharedBoardServerThread implements Runnable {
         System.out.println(splittedUserInfo[1]);
         System.out.println("text: ");
         System.out.println(text);
+        System.out.println("url: ");
+        System.out.println(url);
 
         JSONParser jsonParser = new JSONParser();
 
@@ -270,6 +278,7 @@ public class SharedBoardServerThread implements Runnable {
             postItDetails.put("row", splittedUserInfo[0]);
             postItDetails.put("column", splittedUserInfo[1]);
             postItDetails.put("text", text);
+            postItDetails.put("url", url);
 
             JSONObject postItObject = new JSONObject();
             postItObject.put("postit", postItDetails);
@@ -345,7 +354,9 @@ public class SharedBoardServerThread implements Runnable {
         //Get employee website name
         String text = (String) postitObject.get("text");
 
-        PostItInfo postitToSave = new PostItInfo(board, text, rowToSave, colToSave);
+        String url = (String) postitObject.get("url");
+
+        PostItInfo postitToSave = new PostItInfo(board, text, url ,rowToSave, colToSave);
 
         return postitToSave;
     }
