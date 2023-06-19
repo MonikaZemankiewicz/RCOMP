@@ -197,6 +197,18 @@ public class SharedBoardApp {
         messageService.sendMessage(requestMessage, sOut);
         return readResponse(sIn); //read response
     }
+    public static SBPMessage removePostItRequest(BufferedReader in, DataOutputStream sOut, DataInputStream sIn, String data) throws IOException {
+        SBPMessage requestMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.REMOVE_POST_IT_REQUEST_CODE, data); //send message
+        messageService.sendMessage(requestMessage, sOut);
+        return readResponse(sIn); //read response
+    }
+
+    public static SBPMessage movePostItRequest(BufferedReader in, DataOutputStream sOut, DataInputStream sIn, String data) throws IOException {
+        SBPMessage requestMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.UPDATE_POST_IT_CELL_REQUEST_CODE, data); //send message
+        messageService.sendMessage(requestMessage, sOut);
+        return readResponse(sIn); //read response
+    }
+
 
 
 

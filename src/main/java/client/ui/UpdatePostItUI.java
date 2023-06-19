@@ -57,15 +57,24 @@ public class UpdatePostItUI implements Runnable {
                         throw new RuntimeException(e);
                     }
 
-                    /*break;
+                    break;
                 case "3":
+                    try {
+                        movePostit(in, sOut, sIn);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
 
                     break;
                 case "4":
-
+                    try {
+                        removePostit(in, sOut, sIn);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                     break;
 
-                     */
+
                 default:
                     System.out.println("\nInvalid option.\n");
                     break;
@@ -95,6 +104,28 @@ public class UpdatePostItUI implements Runnable {
         System.out.println(updatePostItTextMessage.data());
 
     }
+
+    public static void removePostit(BufferedReader in, DataOutputStream sOut, DataInputStream sIn) throws IOException {
+        String selectedCell = selectCell(in);
+
+        String dataToSend = selectedCell + "\0";
+        SBPMessage updatePostItTextMessage = SharedBoardApp.removePostItRequest(in, sOut, sIn, dataToSend);
+        System.out.println(updatePostItTextMessage.data());
+
+    }
+
+    public static void movePostit(BufferedReader in, DataOutputStream sOut, DataInputStream sIn) throws IOException {
+        System.out.println("\nSelect Post It to move: ");
+        String oldPosition = selectCell(in);
+        System.out.println("\nSelect new cell: ");
+        String newPosition = selectCell(in);
+
+        String dataToSend = oldPosition + "\0" + newPosition;
+        SBPMessage updatePostItTextMessage = SharedBoardApp.movePostItRequest(in, sOut, sIn, dataToSend);
+        System.out.println(updatePostItTextMessage.data());
+
+    }
+
 
 
     public static String inputText(BufferedReader in) throws IOException {

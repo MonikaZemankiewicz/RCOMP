@@ -47,7 +47,6 @@ public class CreatePostItUI implements Runnable {
             String url = inputUrl(in);
 
             String dataToSend = selectedBoard + "\0" + selectedCell + "\0" + text + "\0" + url;
-            System.out.println(dataToSend);
 
             SBPMessage createPostItMessage = SharedBoardApp.createPostItRequest(in, sOut, sIn, dataToSend);
             System.out.println(createPostItMessage.data());

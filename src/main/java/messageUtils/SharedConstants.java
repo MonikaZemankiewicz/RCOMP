@@ -18,8 +18,9 @@ public class SharedConstants {
     public static final int UPDATE_POST_IT_TEXT_REQUEST_CODE = 13;
     public static final int UPDATE_POST_IT_URL_REQUEST_CODE = 14;
     public static final int UPDATE_POST_IT_CELL_REQUEST_CODE = 15;
-    public static final int UPDATE_POST_IT_RESPONSE_CODE = 16;
-    public static final int CURRENT_MAX_CODE = 16;
+    public static final int REMOVE_POST_IT_REQUEST_CODE = 16;
+    public static final int UPDATE_POST_IT_RESPONSE_CODE = 17;
+    public static final int CURRENT_MAX_CODE = 17;
     public static final int MESSAGE_VERSION = 1;
     public static final int DEFAULT_PORT = 9999;
     public static final int TIMEOUT = 5;
