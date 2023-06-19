@@ -51,14 +51,21 @@ public class UpdatePostItUI implements Runnable {
                     }
                     break;
                 case "2":
+                    try {
+                        updateUrl(in, sOut, sIn);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
 
-                    break;
+                    /*break;
                 case "3":
 
                     break;
                 case "4":
 
                     break;
+
+                     */
                 default:
                     System.out.println("\nInvalid option.\n");
                     break;
@@ -78,11 +85,41 @@ public class UpdatePostItUI implements Runnable {
         System.out.println(updatePostItTextMessage.data());
 
     }
+
+    public static void updateUrl(BufferedReader in, DataOutputStream sOut, DataInputStream sIn) throws IOException {
+        String selectedCell = selectCell(in);
+        String newUrl = inputUrl(in);
+
+        String dataToSend = selectedCell + "\0" + newUrl + "\0";
+        SBPMessage updatePostItTextMessage = SharedBoardApp.updatePostItUrlRequest(in, sOut, sIn, dataToSend);
+        System.out.println(updatePostItTextMessage.data());
+
+    }
+
+
     public static String inputText(BufferedReader in) throws IOException {
         String data ="";
         do {
             try{
                 System.out.println("\nEnter the new post it text: ");
+                String input = in.readLine();
+
+                data = data.concat(input + "\0");
+
+                return data;
+
+            } catch(Exception e) {
+                System.out.println("\nInvalid option. Please, try again:");
+            }
+
+        } while(true);
+    }
+
+    public static String inputUrl(BufferedReader in) throws IOException {
+        String data ="";
+        do {
+            try{
+                System.out.println("\nEnter the post it url: ");
                 String input = in.readLine();
 
                 data = data.concat(input + "\0");

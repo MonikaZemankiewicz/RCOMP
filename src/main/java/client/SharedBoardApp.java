@@ -192,6 +192,12 @@ public class SharedBoardApp {
         return readResponse(sIn); //read response
     }
 
+    public static SBPMessage updatePostItUrlRequest(BufferedReader in, DataOutputStream sOut, DataInputStream sIn, String data) throws IOException {
+        SBPMessage requestMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.UPDATE_POST_IT_URL_REQUEST_CODE, data); //send message
+        messageService.sendMessage(requestMessage, sOut);
+        return readResponse(sIn); //read response
+    }
+
 
 
 

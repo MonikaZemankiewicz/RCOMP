@@ -87,6 +87,11 @@ public class SharedBoardServerThread implements Runnable {
                         System.out.println("Update Post It text request coming from " + clientIP.getHostAddress() + ", port number " + s.getPort());
                         updatePostItTextResponse(message, sOut, sIn);
                         break;
+
+                    case SharedConstants.UPDATE_POST_IT_URL_REQUEST_CODE:
+                        System.out.println("Update Post It url request coming from " + clientIP.getHostAddress() + ", port number " + s.getPort());
+                        updatePostItUrlResponse(message, sOut, sIn);
+                        break;
                 }
             } while (true);
         } catch (IOException ex) {
@@ -332,11 +337,89 @@ public class SharedBoardServerThread implements Runnable {
         //finally send response
         messageService.sendMessage(responseMessage, sOut);
 
+    }
+
+    public static void updatePostItUrlResponse(SBPMessage message, DataOutputStream sOut, DataInputStream sIn) throws IOException {
+        SBPMessage responseMessage;
+        char currentChar;
+        int currentCharIndex = 0;
+        String positionData = "";
+        String url = "";
+        boolean found = false;
+
+        while ((currentChar = message.data().charAt(currentCharIndex)) != '\0') {
+            positionData = positionData.concat(String.valueOf(currentChar));
+            currentCharIndex++;
+
+        }
+
+        currentCharIndex++;
+        currentCharIndex++;
+
+        do {
+            while ((currentChar = message.data().charAt(currentCharIndex)) != '\0') {
+                url = url.concat(String.valueOf(currentChar));
+                currentCharIndex++;
+            }
+            currentCharIndex++;
+
+        } while (currentCharIndex < (message.d_length_1() + message.d_length_2()));
+
+        String[] splittedUserInfo = positionData.split(";");
+
+        JSONParser jsonParser = new JSONParser();
+
+        try (FileReader reader = new FileReader("Postits.json"))
+        {
+
+            Object obj = jsonParser.parse(reader);
+            JSONArray postItsList = (JSONArray) obj;
+
+            for (int i = 0; i < postItsList.size(); ++i) {
+                JSONObject postit = (JSONObject) postItsList.get(i);
+                JSONObject postitData = (JSONObject) postit.get("postit");
+                if (postitData.get("row").toString().equals(splittedUserInfo[0].toString()) && postitData.get("column").toString().equals(splittedUserInfo[1].toString())){
+                    found = true;
+                    postItsList.remove(i);
+                    postitData.put("url", url);
+                    postit.put("postit", postitData);
+                    postItsList.add(postit);
+
+                    try (FileWriter file = new FileWriter("Postits.json")) {
+                        //We can write any JSONArray or JSONObject instance to the file
+                        file.write(postItsList.toJSONString());
+                        file.flush();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if(found){
+            responseMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.UPDATE_POST_IT_RESPONSE_CODE, "\nThe post it was updated successfully!\n");
+        } else {
+            responseMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.UPDATE_POST_IT_RESPONSE_CODE, "\nThe post it with chosen position does not exist\n");
+
+        }
+
+        messageService.sendMessage(responseMessage, sOut);
+
 
 
 
 
     }
+
 
     protected static void sendMessage(SBPMessage message, DataOutputStream sOut) {
         try {
