@@ -115,7 +115,6 @@ public class SharedBoardApp {
                     }
                     break;
                 case "2":
-                    //new ShareBoardUI(in, sOut, sIn).run();
                     responseMessage = shareBoardRequest(in, sOut, sIn);
                     Desktop desktop = java.awt.Desktop.getDesktop();
                     URI uri = URI.create(responseMessage.data());
