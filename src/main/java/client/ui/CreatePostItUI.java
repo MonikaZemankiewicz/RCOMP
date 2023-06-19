@@ -38,13 +38,33 @@ public class CreatePostItUI implements Runnable {
 
             String text = inputText(in);
 
-            String dataToSend = selectedBoard + "\0" + selectedCell + "\0" + text;
+            String url = inputUrl(in);
+
+            String dataToSend = selectedBoard + "\0" + selectedCell + "\0" + text + "\0" + url;
             SBPMessage createPostItMessage = SharedBoardApp.createPostItRequest(in, sOut, sIn, dataToSend);
             System.out.println(createPostItMessage.data());
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public static String inputUrl(BufferedReader in) throws IOException {
+        String data ="";
+        do {
+            try{
+                System.out.println("\nEnter the post it url: ");
+                String input = in.readLine();
+
+                data = data.concat(input + "\0");
+
+                return data;
+
+            } catch(Exception e) {
+                System.out.println("\nInvalid option. Please, try again:");
+            }
+
+        } while(true);
     }
     public static String inputText(BufferedReader in) throws IOException {
         String data ="";
