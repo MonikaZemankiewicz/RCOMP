@@ -114,6 +114,10 @@ public class SharedBoardServerThread implements Runnable {
     }
 
     public static void authResponse(DataOutputStream sOut, DataInputStream sIn, SBPMessage message) throws IOException {
+        String[][] userdata = {
+            {"username","password"},
+            {"admin","password"},
+        };
         String username = "";
         String password = "";
         char currentChar;
@@ -129,9 +133,17 @@ public class SharedBoardServerThread implements Runnable {
             password = password.concat(String.valueOf(currentChar));
             currentCharIndex++;
         }
-
-        SBPMessage responseMessage = new SBPMessage(1, SharedConstants.ACK_CODE, 0, 0, "");
+        for (int i=0; i < userdata.length; i++){
+            if(userdata[i][0].equals(username) && userdata[i][1].equals(password)){
+                SBPMessage responseMessage = new SBPMessage(1, SharedConstants.ACK_CODE, 0, 0, "");
+                messageService.sendMessage(responseMessage, sOut);
+                break;
+            }
+        }
+        SBPMessage responseMessage = new SBPMessage(1, SharedConstants.ERR_CODE,"");
         messageService.sendMessage(responseMessage, sOut);
+
+
 
     }
 

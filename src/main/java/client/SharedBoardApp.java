@@ -36,9 +36,27 @@ public class SharedBoardApp {
             System.exit(1);
         }
 
+
+
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         DataOutputStream sOut = new DataOutputStream(sock.getOutputStream());
         DataInputStream sIn = new DataInputStream(sock.getInputStream());
+        messageService = new MessageService();
+
+
+        try{
+            // Authenticate client
+            System.out.println("[Login]");
+            boolean authenticated = authRequest(in, sOut, sIn);
+            while(!authenticated){
+                authenticated = authRequest(in, sOut, sIn);
+            }
+
+        } catch (IOException e) {
+            System.out.println("Error after authentication...");
+            e.printStackTrace();}
+
+
         messageService = new MessageService();
         String option;
         System.out.println("Welcome!");
@@ -123,7 +141,12 @@ public class SharedBoardApp {
         String data = username + "\0" + password + "\0";
         SBPMessage requestMessage = new SBPMessage(1, SharedConstants.AUTH_CODE, data);  //send message
         sendMessage(requestMessage, sOut);
-        return(readMessage(sIn).code() == SharedConstants.ACK_CODE);  //read response
+        if(readMessage(sIn).code() == SharedConstants.ACK_CODE){
+            return true;
+        }else{
+            System.out.println("WRONG CREDENTIALS!");
+            return false;
+        }
     }
 
     public static boolean commtestRequest(BufferedReader in, DataOutputStream sOut, DataInputStream sIn) throws IOException {
