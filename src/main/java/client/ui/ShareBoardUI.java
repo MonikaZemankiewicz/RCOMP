@@ -30,7 +30,7 @@ public class ShareBoardUI implements Runnable {
     public void run() {
         String data = enterBoardData(in);
         try{
-            SBPMessage shareBoardMessage = SharedBoardApp.shareBoardRequest(in, sOut, sIn, data);
+            SBPMessage shareBoardMessage = SharedBoardApp.shareBoardRequest(in, sOut, sIn);
             if(shareBoardMessage.code() == ERR_CODE) {
                 throw new RuntimeException(shareBoardMessage.data());
             }

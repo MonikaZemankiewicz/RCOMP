@@ -7,10 +7,12 @@ import messageUtils.MessageService;
 import messageUtils.SBPMessage;
 import messageUtils.SharedConstants;
 
+import java.awt.*;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -72,14 +74,10 @@ public class SharedBoardServerThread implements Runnable {
                         authResponse(sOut, sIn, message);
                         break;
 
-                    case SharedConstants.OWNED_BOARDS_REQUEST_CODE:
-                        System.out.println("Owned boards request coming from " + clientIP.getHostAddress() + ", port number " + s.getPort());
-                        ownedBoardsResponse(sOut, sIn);
-                        break;
-
                     case SharedConstants.SHARE_BOARD_REQUEST_CODE:
                         System.out.println("Share board request coming from " + clientIP.getHostAddress() + ", port number " + s.getPort());
-                        shareBoardResponse(message, sOut, sIn);
+                        SBPMessage answer = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.SHARE_BOARD_RESPONSE_CODE, "http://localhost:8000/index.html");
+                        shareBoardResponse(answer, sOut, sIn);
                         break;
 
                     case SharedConstants.CREATE_POST_IT_REQUEST_CODE:
@@ -116,99 +114,21 @@ public class SharedBoardServerThread implements Runnable {
         };
         String username = "";
         String password = "";
-        char currentChar;
-        int currentCharIndex = 0;
 
-        while (((currentChar = message.data().charAt(currentCharIndex)) != '\0') && currentCharIndex < (message.d_length_1() + message.d_length_2())) {  //read username
-            username = username.concat(String.valueOf(currentChar));
-            currentCharIndex++;
-        }
-        currentCharIndex++;
-
-        while (((currentChar = message.data().charAt(currentCharIndex)) != '\0') && currentCharIndex < (message.d_length_1() + message.d_length_2())) {  //read password
-            password = password.concat(String.valueOf(currentChar));
-            currentCharIndex++;
-        }
         for (int i=0; i < userdata.length; i++){
             if(userdata[i][0].equals(username) && userdata[i][1].equals(password)){
                 SBPMessage responseMessage = new SBPMessage(1, SharedConstants.ACK_CODE, 0, 0, "");
                 messageService.sendMessage(responseMessage, sOut);
-                break;
+            }else{
+                SBPMessage responseMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.ERR_CODE,"");
+                messageService.sendMessage(responseMessage, sOut);
             }
         }
-        SBPMessage responseMessage = new SBPMessage(1, SharedConstants.ERR_CODE,"");
-        messageService.sendMessage(responseMessage, sOut);
 
-
-
-    }
-
-    public static void ownedBoardsResponse(DataOutputStream sOut, DataInputStream sIn) throws IOException {
-        SBPMessage responseMessage;
-
-        File dir = new File(".");
-        List<String> list = Arrays.asList(dir.list(
-                new FilenameFilter() {
-                    @Override public boolean accept(File dir, String name) {
-                        return name.endsWith(".html");
-                    }
-                }
-        ));
-
-        String data = "";
-        int idx = 1;
-        for (String s:
-                list) {
-            data = data.concat(s + "\0");
-            idx++;
-        }
-
-
-        responseMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.OWNED_BOARDS_RESPONSE_CODE, data);
-
-        //send response
-        messageService.sendMessage(responseMessage, sOut);
     }
 
     public static void shareBoardResponse(SBPMessage message, DataOutputStream sOut, DataInputStream sIn) throws IOException {
-        SBPMessage responseMessage;
-        String notAddedUsers = "";
-        char currentChar;
-        int currentCharIndex = 0;
-        boolean addedAtLeastOneUser = false;
-
-        //read selected board name
-        String boardName = "";
-
-        while ((currentChar = message.data().charAt(currentCharIndex)) != '\0') {
-            boardName = boardName.concat(String.valueOf(currentChar));
-            currentCharIndex++;
-        }
-
-        currentCharIndex++;
-
-
-        //read users info and share the board to them
-        do {
-            String userInfo = "";
-
-            while ((currentChar = message.data().charAt(currentCharIndex)) != '\0') {
-                userInfo = userInfo.concat(String.valueOf(currentChar));
-                currentCharIndex++;
-            }
-
-            String[] splittedUserInfo = userInfo.split(";");
-
-
-
-            currentCharIndex++;
-
-        } while (currentCharIndex < (message.d_length_1() + message.d_length_2()));
-
-
-
-        responseMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.SHARE_BOARD_RESPONSE_CODE, "\nThe board was shared with the users successfully!\n");
-
+        SBPMessage responseMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.SHARE_BOARD_RESPONSE_CODE, message.data());
         //finally send response
         messageService.sendMessage(responseMessage, sOut);
     }
@@ -310,8 +230,6 @@ public class SharedBoardServerThread implements Runnable {
             e.printStackTrace();
         }
 
-        //SimpleHttpServer server = new SimpleHttpServer();
-        //server.run();
         responseMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.CREATE_POST_IT_RESPONSE_CODE, "\nThe post it was created successfully!\n");
 
         //finally send response

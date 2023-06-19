@@ -4,9 +4,11 @@ import client.httpServer.SimpleHttpServer;
 import messageUtils.SharedConstants;
 
 
+import java.awt.*;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URI;
 
 
 public class SharedBoardServer {

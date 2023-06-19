@@ -7,6 +7,7 @@ import messageUtils.MessageService;
 import messageUtils.SBPMessage;
 import messageUtils.SharedConstants;
 
+import java.awt.*;
 import java.io.*;
 import java.net.*;
 
@@ -97,14 +98,14 @@ public class SharedBoardApp {
         do {
             System.out.println("Main Menu:\n");
             System.out.println("1 - Send a test request");
-            System.out.println("2 - Share a board");
+            System.out.println("2 - Open board");
             //System.out.println("3 - Archive a board");
             System.out.println("4 - Create a post-it");
             System.out.println("5 - Update a post-it");
             System.out.println("0 - Logout");
 
             option = in.readLine();
-
+            SBPMessage responseMessage;
             switch(option) {
                 case "0":
                     return;
@@ -114,7 +115,15 @@ public class SharedBoardApp {
                     }
                     break;
                 case "2":
-                    new ShareBoardUI(in, sOut, sIn).run();
+                    //new ShareBoardUI(in, sOut, sIn).run();
+                    responseMessage = shareBoardRequest(in, sOut, sIn);
+                    Desktop desktop = java.awt.Desktop.getDesktop();
+                    URI uri = URI.create(responseMessage.data());
+                    try {
+                        desktop.browse(uri);
+                    } catch (IOException e) {
+                        System.out.println(e.getMessage());
+                    }
                     break;
                 case "3":
                     //new ArchiveBoardUI(sOut, sIn, messageService).show();
@@ -161,14 +170,8 @@ public class SharedBoardApp {
         return readMessage(sIn).code() == SharedConstants.ACK_CODE; //read response
     }
 
-    public static SBPMessage ownedBoardsRequest(DataOutputStream sOut, DataInputStream sIn) throws IOException {
-        SBPMessage requestMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.OWNED_BOARDS_REQUEST_CODE, "");  //send message
-        messageService.sendMessage(requestMessage, sOut);
-        return readResponse(sIn);  //read response
-    }
-
-    public static SBPMessage shareBoardRequest(BufferedReader in, DataOutputStream sOut, DataInputStream sIn, String data) throws IOException {
-        SBPMessage requestMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.SHARE_BOARD_REQUEST_CODE, data); //send message
+    public static SBPMessage shareBoardRequest(BufferedReader in, DataOutputStream sOut, DataInputStream sIn) throws IOException {
+        SBPMessage requestMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.SHARE_BOARD_REQUEST_CODE, ""); //send message
         messageService.sendMessage(requestMessage, sOut);
         return readResponse(sIn); //read response
     }

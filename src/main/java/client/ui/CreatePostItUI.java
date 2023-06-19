@@ -25,6 +25,7 @@ public class CreatePostItUI implements Runnable {
 
     @Override
     public void run() {
+        /*
         try {
             SBPMessage ownedBoardsMessage = SharedBoardApp.ownedBoardsRequest(sOut, sIn); //request all owned board by user
 
@@ -47,6 +48,8 @@ public class CreatePostItUI implements Runnable {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+
+         */
     }
 
     public static String inputUrl(BufferedReader in) throws IOException {

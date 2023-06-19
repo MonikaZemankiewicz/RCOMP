@@ -25,8 +25,10 @@ public class UpdatePostItUI implements Runnable {
 
     @Override
     public void run() {
+        /*
         try {
-            SBPMessage ownedBoardsMessage = SharedBoardApp.ownedBoardsRequest(sOut, sIn); //request all owned board by user
+
+            //SBPMessage ownedBoardsMessage = SharedBoardApp.ownedBoardsRequest(sOut, sIn); //request all owned board by user
 
             if(ownedBoardsMessage.code() == ERR_CODE) {       //verify message code
                 throw new RuntimeException(ownedBoardsMessage.data());
@@ -45,6 +47,8 @@ public class UpdatePostItUI implements Runnable {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+
+             */
     }
     public static String inputText(BufferedReader in) throws IOException {
         String data ="";
