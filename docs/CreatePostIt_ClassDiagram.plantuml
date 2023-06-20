@@ -1,0 +1,132 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class CreatePostItUI {
+  ~ in: BufferedReader
+  ~ sIn: DataInputStream
+  ~ sOut: DataOutputStream
+  ~ ERR_CODE: int
+  + rightAnswer(String): boolean
+  + run(): void
+}
+class InputHandler {
+  + inputUrl(BufferedReader): String
+  + selectCell(BufferedReader): String
+  + showAndSelectBoard(SBPMessage, BufferedReader): String
+  + inputText(BufferedReader): String
+}
+class MessageService {
+  + readMessage(DataInputStream): SBPMessage
+  + sendMessage(SBPMessage, DataOutputStream): void
+}
+class PostItInfo {
+  - text: String
+  - boardName: String
+  - row: int
+  - url: String
+  - col: int
+  + getBoardName(): String
+  + getUrl(): String
+  + setText(String): void
+  + setUrl(String): void
+  + setColumn(int): void
+  + getRow(): int
+  + setRow(int): void
+  + setBoardName(String): void
+  + getText(): String
+  + getColumn(): int
+}
+class SBPMessage {
+  - code: int
+  - MESSAGE_MAX_SIZE_BYTES: int
+  - version: int
+  - d_length_1: int
+  - data: String
+  - d_length_2: int
+  + code(): int
+  + version(): int
+  + d_length_1(): int
+  + d_length_2(): int
+  + data(): String
+}
+class SharedBoardApp {
+  ~ sock: Socket
+  ~ serverIP: InetAddress
+  ~ messageService: MessageService
+  + authRequest(BufferedReader, DataOutputStream, DataInputStream): boolean
+  + createPostItRequest(BufferedReader, DataOutputStream, DataInputStream, String): SBPMessage
+  + updatePostItUrlRequest(BufferedReader, DataOutputStream, DataInputStream, String): SBPMessage
+  + sendMessage(SBPMessage, DataOutputStream): void
+  + ownedBoardsRequest(DataOutputStream, DataInputStream): SBPMessage
+  + disconnRequest(BufferedReader, DataOutputStream, DataInputStream): boolean
+  + readMessage(DataInputStream): SBPMessage
+  + commtestRequest(BufferedReader, DataOutputStream, DataInputStream): boolean
+  + main(String[]): void
+  + movePostItRequest(BufferedReader, DataOutputStream, DataInputStream, String): SBPMessage
+  + loggedUserMenu(BufferedReader, DataOutputStream, DataInputStream): void
+  + removePostItRequest(BufferedReader, DataOutputStream, DataInputStream, String): SBPMessage
+  + readResponse(DataInputStream): SBPMessage
+  + shareBoardRequest(BufferedReader, DataOutputStream, DataInputStream): SBPMessage
+  + updatePostItTextRequest(BufferedReader, DataOutputStream, DataInputStream, String): SBPMessage
+}
+class SharedBoardServer {
+  ~ sock: ServerSocket
+  + main(String[]): void
+}
+class SharedBoardServerThread {
+  - sIn: DataInputStream
+  - s: Socket
+  - sOut: DataOutputStream
+  - messageService: MessageService
+  + run(): void
+  + shareBoardResponse(SBPMessage, DataOutputStream, DataInputStream): void
+  + authResponse(DataOutputStream, DataInputStream, SBPMessage): void
+  + disconnResponse(DataOutputStream, DataInputStream, Socket): void
+  # readMessage(DataInputStream): SBPMessage
+  + commtestResponse(DataOutputStream, DataInputStream): void
+  + createPostItResponse(SBPMessage, DataOutputStream, DataInputStream): void
+  + updatePostItUrlResponse(SBPMessage, DataOutputStream, DataInputStream): void
+  + ownedBoardsResponse(DataOutputStream, DataInputStream): void
+  + updatePostItTextResponse(SBPMessage, DataOutputStream, DataInputStream): void
+  # sendMessage(SBPMessage, DataOutputStream): void
+  + movePostItResponse(SBPMessage, DataOutputStream, DataInputStream): void
+  + removePostItResponse(SBPMessage, DataOutputStream, DataInputStream): void
+}
+class SharedConstants {
+  + UPDATE_POST_IT_TEXT_REQUEST_CODE: int
+  + CURRENT_MAX_CODE: int
+  + DEFAULT_PORT: int
+  + CREATE_POST_IT_REQUEST_CODE: int
+  + OWNED_BOARDS_REQUEST_CODE: int
+  + MESSAGE_VERSION: int
+  + SHARE_BOARD_RESPONSE_CODE: int
+  + ACK_CODE: int
+  + DISCONN_CODE: int
+  + CREATE_POST_IT_RESPONSE_CODE: int
+  + UPDATE_POST_IT_URL_REQUEST_CODE: int
+  + AUTH_CODE: int
+  + FIND_OWNED_BOARDS_CODE: int
+  + ARCHIVE_BOARD_CODE: int
+  + SHARE_BOARD_REQUEST_CODE: int
+  + UPDATE_POST_IT_CELL_REQUEST_CODE: int
+  + REMOVE_POST_IT_REQUEST_CODE: int
+  + COMMTEST_CODE: int
+  + ERR_CODE: int
+  + TIMEOUT: int
+  + UPDATE_POST_IT_RESPONSE_CODE: int
+  + OWNED_BOARDS_RESPONSE_CODE: int
+}
+
+MessageService           -[#595959,dashed]->  SBPMessage              : "«create»"
+SharedBoardApp           -[#595959,dashed]->  CreatePostItUI          : "«create»"
+SharedBoardApp          "1" *-[#595959,plain]-> "messageService\n1" MessageService          
+SharedBoardApp           -[#595959,dashed]->  MessageService          : "«create»"
+SharedBoardApp           -[#595959,dashed]->  SBPMessage              : "«create»"
+SharedBoardServer        -[#595959,dashed]->  SharedBoardServerThread : "«create»"
+SharedBoardServerThread "1" *-[#595959,plain]-> "messageService\n1" MessageService          
+SharedBoardServerThread  -[#595959,dashed]->  MessageService          : "«create»"
+SharedBoardServerThread  -[#595959,dashed]->  SBPMessage              : "«create»"
+@enduml

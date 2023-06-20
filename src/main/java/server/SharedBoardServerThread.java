@@ -608,34 +608,4 @@ public class SharedBoardServerThread implements Runnable {
         return null;
     }
 
-
-    /*
-    private static PostItInfo parseNoteObject(JSONObject postit)
-    {
-
-        //Get employee object within list
-        JSONObject postitObject = (JSONObject) postit.get("postit");
-
-        //Get employee first name
-        String board = (String) postitObject.get("board");
-
-        //Get employee first name
-        String row = (String) postitObject.get("row");
-        int rowToSave = Integer.parseInt(row);
-
-        //Get employee last name
-        String col = (String) postitObject.get("column");
-        int colToSave = Integer.parseInt(col);
-
-        //Get employee website name
-        String text = (String) postitObject.get("text");
-
-        String url = (String) postitObject.get("url");
-
-        PostItInfo postitToSave = new PostItInfo(board, text, url ,rowToSave, colToSave);
-
-        return postitToSave;
-    }
-
-     */
 }
