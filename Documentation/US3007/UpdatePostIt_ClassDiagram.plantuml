@@ -1,0 +1,84 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class InputHandler {
+  + showAndSelectBoard(SBPMessage, BufferedReader): String
+  + inputText(BufferedReader): String
+  + inputUrl(BufferedReader): String
+  + selectCell(BufferedReader): String
+}
+class MessageService {
+  + readMessage(DataInputStream): SBPMessage
+  + sendMessage(SBPMessage, DataOutputStream): void
+}
+class PostItInfo {
+   text: String
+   column: int
+   boardName: String
+   url: String
+   row: int
+}
+class SBPMessage {
+  + d_length_2(): int
+  + version(): int
+  + d_length_1(): int
+  + data(): String
+  + code(): int
+}
+class SharedBoardApp {
+  + disconnRequest(BufferedReader, DataOutputStream, DataInputStream): boolean
+  + authRequest(BufferedReader, DataOutputStream, DataInputStream): boolean
+  + removePostItRequest(BufferedReader, DataOutputStream, DataInputStream, String): SBPMessage
+  + readResponse(DataInputStream): SBPMessage
+  + movePostItRequest(BufferedReader, DataOutputStream, DataInputStream, String): SBPMessage
+  + ownedBoardsRequest(DataOutputStream, DataInputStream): SBPMessage
+  + main(String[]): void
+  + shareBoardRequest(BufferedReader, DataOutputStream, DataInputStream): SBPMessage
+  + updatePostItTextRequest(BufferedReader, DataOutputStream, DataInputStream, String): SBPMessage
+  + updatePostItUrlRequest(BufferedReader, DataOutputStream, DataInputStream, String): SBPMessage
+  + readMessage(DataInputStream): SBPMessage
+  + createPostItRequest(BufferedReader, DataOutputStream, DataInputStream, String): SBPMessage
+  + commtestRequest(BufferedReader, DataOutputStream, DataInputStream): boolean
+  + sendMessage(SBPMessage, DataOutputStream): void
+  + loggedUserMenu(BufferedReader, DataOutputStream, DataInputStream): void
+}
+class SharedBoardServer {
+  + main(String[]): void
+}
+class SharedBoardServerThread {
+  + commtestResponse(DataOutputStream, DataInputStream): void
+  # sendMessage(SBPMessage, DataOutputStream): void
+  + ownedBoardsResponse(DataOutputStream, DataInputStream): void
+  + shareBoardResponse(SBPMessage, DataOutputStream, DataInputStream): void
+  # readMessage(DataInputStream): SBPMessage
+  + removePostItResponse(SBPMessage, DataOutputStream, DataInputStream): void
+  + createPostItResponse(SBPMessage, DataOutputStream, DataInputStream): void
+  + movePostItResponse(SBPMessage, DataOutputStream, DataInputStream): void
+  + run(): void
+  + updatePostItTextResponse(SBPMessage, DataOutputStream, DataInputStream): void
+  + disconnResponse(DataOutputStream, DataInputStream, Socket): void
+  + authResponse(DataOutputStream, DataInputStream, SBPMessage): void
+  + updatePostItUrlResponse(SBPMessage, DataOutputStream, DataInputStream): void
+}
+class SharedConstants
+class UpdatePostItUI {
+  + removePostit(BufferedReader, DataOutputStream, DataInputStream): void
+  + updateUrl(BufferedReader, DataOutputStream, DataInputStream): void
+  + run(): void
+  + updateText(BufferedReader, DataOutputStream, DataInputStream): void
+  + movePostit(BufferedReader, DataOutputStream, DataInputStream): void
+}
+
+MessageService           -[#595959,dashed]->  SBPMessage              : "«create»"
+SharedBoardApp          "1" *-[#595959,plain]-> "messageService\n1" MessageService          
+SharedBoardApp           -[#595959,dashed]->  MessageService          : "«create»"
+SharedBoardApp           -[#595959,dashed]->  SBPMessage              : "«create»"
+SharedBoardApp           -[#595959,dashed]->  UpdatePostItUI          : "«create»"
+SharedBoardServer        -[#595959,dashed]->  SharedBoardServerThread : "«create»"
+SharedBoardServerThread  -[#595959,dashed]->  MessageService          : "«create»"
+SharedBoardServerThread "1" *-[#595959,plain]-> "messageService\n1" MessageService          
+SharedBoardServerThread  -[#595959,dashed]->  SBPMessage              : "«create»"
+@enduml
