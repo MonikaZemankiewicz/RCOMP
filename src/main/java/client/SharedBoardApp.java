@@ -57,8 +57,8 @@ public class SharedBoardApp {
         } catch (IOException e) {
             System.out.println("Error after authentication...");
             e.printStackTrace();}
-
         */
+
         String option;
         System.out.println("Welcome!");
 
