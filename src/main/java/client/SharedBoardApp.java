@@ -45,20 +45,7 @@ public class SharedBoardApp {
         DataInputStream sIn = new DataInputStream(sock.getInputStream());
         messageService = new MessageService();
 
-        /*
-        try{
-            // Authenticate client
-            System.out.println("[Login]");
-            boolean authenticated = authRequest(in, sOut, sIn);
-            while(!authenticated){
-                authenticated = authRequest(in, sOut, sIn);
-            }
-
-        } catch (IOException e) {
-            System.out.println("Error after authentication...");
-            e.printStackTrace();}
-
-        */
+        login(in, sOut, sIn);
         String option;
         System.out.println("Welcome!");
 
@@ -140,6 +127,19 @@ public class SharedBoardApp {
         } while (true);
     }
 
+    public static void login(BufferedReader in, DataOutputStream sOut, DataInputStream sIn){
+        try{
+            // Authenticate client
+            System.out.println("[Login]");
+            boolean authenticated = authRequest(in, sOut, sIn);
+            while(!authenticated){
+                authenticated = authRequest(in, sOut, sIn);
+            }
+
+        } catch (IOException e) {
+            System.out.println("Error after authentication...");
+            e.printStackTrace();}
+    }
     public static boolean authRequest(BufferedReader in, DataOutputStream sOut, DataInputStream sIn) throws IOException {
         String username, password;
         System.out.println("\nUsername:");
