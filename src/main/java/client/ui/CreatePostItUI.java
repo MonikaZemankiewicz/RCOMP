@@ -10,7 +10,7 @@ import java.io.DataOutputStream;
 public class CreatePostItUI implements Runnable {
     static final int ERR_CODE = 3;
 
-    BufferedReader in;
+    public BufferedReader in;
     DataInputStream sIn;
     DataOutputStream sOut;
 

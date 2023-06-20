@@ -16,7 +16,7 @@ import java.net.*;
 
 public class SharedBoardApp {
     static InetAddress serverIP;
-    static Socket sock;
+    public static Socket sock;
     static MessageService messageService;
 
     public static void main(String[] args) throws Exception {
