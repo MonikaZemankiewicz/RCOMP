@@ -50,6 +50,7 @@
         };
 
         request.ontimeout = function() {
+            document.body.innerHTML='';
             var header = document.createElement("h1");
             var headerText = document.createTextNode("Server timeout, still trying...");
             header.appendChild(headerText);
@@ -58,6 +59,7 @@
         };
 
         request.onerror = function() {
+            document.body.innerHTML='';
             var header = document.createElement("h1");
             var headerText = document.createTextNode("No server reply, still trying...");
             header.appendChild(headerText);

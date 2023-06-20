@@ -34,6 +34,8 @@ public class UpdatePostItUI implements Runnable {
             System.out.println("2 - Update url");
             System.out.println("3 - Move to a different cell");
             System.out.println("4 - Remove post it");
+            System.out.println("0 - Go back");
+
 
 
             try {
@@ -73,7 +75,8 @@ public class UpdatePostItUI implements Runnable {
                         throw new RuntimeException(e);
                     }
                     break;
-
+                case "0":
+                    return;
 
                 default:
                     System.out.println("\nInvalid option.\n");
@@ -86,8 +89,8 @@ public class UpdatePostItUI implements Runnable {
     }
 
     public static void updateText(BufferedReader in, DataOutputStream sOut, DataInputStream sIn) throws IOException {
-        String selectedCell = selectCell(in);
-        String newText = inputText(in);
+        String selectedCell = inputHandler.selectCell(in);
+        String newText = inputHandler.inputText(in);
 
         String dataToSend = selectedCell + "\0" + newText + "\0";
         SBPMessage updatePostItTextMessage = SharedBoardApp.updatePostItTextRequest(in, sOut, sIn, dataToSend);
@@ -96,8 +99,8 @@ public class UpdatePostItUI implements Runnable {
     }
 
     public static void updateUrl(BufferedReader in, DataOutputStream sOut, DataInputStream sIn) throws IOException {
-        String selectedCell = selectCell(in);
-        String newUrl = inputUrl(in);
+        String selectedCell = inputHandler.selectCell(in);
+        String newUrl = inputHandler.inputUrl(in);
 
         String dataToSend = selectedCell + "\0" + newUrl + "\0";
         SBPMessage updatePostItTextMessage = SharedBoardApp.updatePostItUrlRequest(in, sOut, sIn, dataToSend);
@@ -106,7 +109,7 @@ public class UpdatePostItUI implements Runnable {
     }
 
     public static void removePostit(BufferedReader in, DataOutputStream sOut, DataInputStream sIn) throws IOException {
-        String selectedCell = selectCell(in);
+        String selectedCell = inputHandler.selectCell(in);
 
         String dataToSend = selectedCell + "\0";
         SBPMessage updatePostItTextMessage = SharedBoardApp.removePostItRequest(in, sOut, sIn, dataToSend);
@@ -116,9 +119,9 @@ public class UpdatePostItUI implements Runnable {
 
     public static void movePostit(BufferedReader in, DataOutputStream sOut, DataInputStream sIn) throws IOException {
         System.out.println("\nSelect Post It to move: ");
-        String oldPosition = selectCell(in);
+        String oldPosition = inputHandler.selectCell(in);
         System.out.println("\nSelect new cell: ");
-        String newPosition = selectCell(in);
+        String newPosition = inputHandler.selectCell(in);
 
         String dataToSend = oldPosition + "\0" + newPosition;
         SBPMessage updatePostItTextMessage = SharedBoardApp.movePostItRequest(in, sOut, sIn, dataToSend);
@@ -126,94 +129,4 @@ public class UpdatePostItUI implements Runnable {
 
     }
 
-
-
-    public static String inputText(BufferedReader in) throws IOException {
-        String data ="";
-        do {
-            try{
-                System.out.println("\nEnter the new post it text: ");
-                String input = in.readLine();
-
-                data = data.concat(input + "\0");
-
-                return data;
-
-            } catch(Exception e) {
-                System.out.println("\nInvalid option. Please, try again:");
-            }
-
-        } while(true);
-    }
-
-    public static String inputUrl(BufferedReader in) throws IOException {
-        String data ="";
-        do {
-            try{
-                System.out.println("\nEnter the post it url: ");
-                String input = in.readLine();
-
-                data = data.concat(input + "\0");
-
-                return data;
-
-            } catch(Exception e) {
-                System.out.println("\nInvalid option. Please, try again:");
-            }
-
-        } while(true);
-    }
-    public static String selectCell(BufferedReader in) throws IOException {
-        String data = "";
-        do {
-            try {
-                System.out.println("\nEnter the row number: ");
-                String row = in.readLine();
-
-                System.out.println("\nEnter the column number: ");
-                String column = in.readLine();
-
-                data = data.concat(row + ";" + column +"\0");
-
-                return data;
-            } catch(Exception e) {
-                System.out.println("\nInvalid option. Please, try again:");
-            }
-
-        } while(true);
-    }
-
-    public static String showAndSelectBoard(SBPMessage responseMessage, BufferedReader in) throws IOException {
-        String message = responseMessage.data();
-        int currentIndex = 0;
-        int currentBoardNumber = 1;
-        char currentChar;
-        String currentBoardName = "";
-        List<String> boardsNames = new ArrayList<>();
-
-        System.out.println("\nSelect a board:\n");
-
-        while(currentIndex < (responseMessage.d_length_1() + responseMessage.d_length_2())) {
-            while((currentChar = message.charAt(currentIndex)) != '\0') {
-                currentBoardName = currentBoardName.concat(String.valueOf(currentChar));
-                currentIndex++;
-            }
-            System.out.printf("%d - %s\n", currentBoardNumber, currentBoardName);  //Print Board information
-            boardsNames.add(currentBoardName);
-            currentBoardNumber++;
-            currentIndex++;
-            currentBoardName = "";
-        }
-        do {
-            try {
-                int option = Integer.parseInt(in.readLine());
-                if(option < 0 || option > boardsNames.size()) {
-                    throw new Exception();
-                }
-                return (boardsNames.get(option - 1));
-            } catch(Exception e) {
-                System.out.println("\nInvalid option. Please, try again:");
-            }
-        } while(true);
-    }
 }

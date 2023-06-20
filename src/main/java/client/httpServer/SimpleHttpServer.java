@@ -115,6 +115,7 @@ public class SimpleHttpServer implements Runnable{
                     "        };\n" +
                     "\n" +
                     "        request.ontimeout = function() {\n" +
+                    "            document.body.innerHTML='';\n" +
                     "            var header = document.createElement(\"h1\");\n" +
                     "            var headerText = document.createTextNode(\"Server timeout, still trying...\");\n" +
                     "            header.appendChild(headerText);\n" +
@@ -123,6 +124,7 @@ public class SimpleHttpServer implements Runnable{
                     "        };\n" +
                     "\n" +
                     "        request.onerror = function() {\n" +
+                    "            document.body.innerHTML='';\n" +
                     "            var header = document.createElement(\"h1\");\n" +
                     "            var headerText = document.createTextNode(\"No server reply, still trying...\");\n" +
                     "            header.appendChild(headerText);\n" +
