@@ -1,0 +1,314 @@
+@startuml
+participant Actor
+Actor -> SharedBoardApp : main
+activate SharedBoardApp
+SharedBoardApp -> SharedBoardApp : loggedUserMenu
+activate SharedBoardApp
+SharedBoardApp -> SharedBoardApp : commtestRequest
+activate SharedBoardApp
+create SBPMessage
+SharedBoardApp -> SBPMessage : new
+activate SBPMessage
+SBPMessage --> SharedBoardApp
+deactivate SBPMessage
+SharedBoardApp -> SharedBoardApp : sendMessage
+activate SharedBoardApp
+SharedBoardApp -> MessageService : sendMessage
+activate MessageService
+MessageService --> SharedBoardApp
+deactivate MessageService
+SharedBoardApp --> SharedBoardApp
+deactivate SharedBoardApp
+SharedBoardApp -> SharedBoardApp : readMessage
+activate SharedBoardApp
+SharedBoardApp -> MessageService : readMessage
+activate MessageService
+MessageService --> SharedBoardApp
+deactivate MessageService
+SharedBoardApp --> SharedBoardApp
+deactivate SharedBoardApp
+SharedBoardApp -> SBPMessage : code
+activate SBPMessage
+SBPMessage --> SharedBoardApp
+deactivate SBPMessage
+SharedBoardApp --> SharedBoardApp
+deactivate SharedBoardApp
+SharedBoardApp -> SharedBoardApp : shareBoardRequest
+activate SharedBoardApp
+create SBPMessage
+SharedBoardApp -> SBPMessage : new
+activate SBPMessage
+SBPMessage --> SharedBoardApp
+deactivate SBPMessage
+SharedBoardApp -> MessageService : sendMessage
+activate MessageService
+MessageService -> SBPMessage : version
+activate SBPMessage
+SBPMessage --> MessageService
+deactivate SBPMessage
+MessageService -> SBPMessage : code
+activate SBPMessage
+SBPMessage --> MessageService
+deactivate SBPMessage
+MessageService -> SBPMessage : d_length_1
+activate SBPMessage
+SBPMessage --> MessageService
+deactivate SBPMessage
+MessageService -> SBPMessage : d_length_2
+activate SBPMessage
+SBPMessage --> MessageService
+deactivate SBPMessage
+MessageService -> SBPMessage : data
+activate SBPMessage
+SBPMessage --> MessageService
+deactivate SBPMessage
+MessageService --> SharedBoardApp
+deactivate MessageService
+SharedBoardApp -> SharedBoardApp : readResponse
+activate SharedBoardApp
+SharedBoardApp -> MessageService : readMessage
+activate MessageService
+MessageService --> SharedBoardApp
+deactivate MessageService
+SharedBoardApp --> SharedBoardApp
+deactivate SharedBoardApp
+SharedBoardApp --> SharedBoardApp
+deactivate SharedBoardApp
+SharedBoardApp -> SBPMessage : data
+activate SBPMessage
+SBPMessage --> SharedBoardApp
+deactivate SBPMessage
+create CreatePostItUI
+SharedBoardApp -> CreatePostItUI : new
+activate CreatePostItUI
+CreatePostItUI --> SharedBoardApp
+deactivate CreatePostItUI
+SharedBoardApp -> CreatePostItUI : run
+activate CreatePostItUI
+CreatePostItUI -> SharedBoardApp : ownedBoardsRequest
+activate SharedBoardApp
+create SBPMessage
+SharedBoardApp -> SBPMessage : new
+activate SBPMessage
+SBPMessage --> SharedBoardApp
+deactivate SBPMessage
+SharedBoardApp -> MessageService : sendMessage
+activate MessageService
+MessageService --> SharedBoardApp
+deactivate MessageService
+SharedBoardApp -> SharedBoardApp : readResponse
+activate SharedBoardApp
+SharedBoardApp --> SharedBoardApp
+deactivate SharedBoardApp
+SharedBoardApp --> CreatePostItUI
+deactivate SharedBoardApp
+CreatePostItUI -> SBPMessage : code
+activate SBPMessage
+SBPMessage --> CreatePostItUI
+deactivate SBPMessage
+CreatePostItUI -> SBPMessage : data
+activate SBPMessage
+SBPMessage --> CreatePostItUI
+deactivate SBPMessage
+CreatePostItUI -> InputHandler : showAndSelectBoard
+activate InputHandler
+InputHandler -> SBPMessage : data
+activate SBPMessage
+SBPMessage --> InputHandler
+deactivate SBPMessage
+InputHandler -> SBPMessage : d_length_1
+activate SBPMessage
+SBPMessage --> InputHandler
+deactivate SBPMessage
+InputHandler -> SBPMessage : d_length_2
+activate SBPMessage
+SBPMessage --> InputHandler
+deactivate SBPMessage
+InputHandler --> CreatePostItUI
+deactivate InputHandler
+CreatePostItUI -> InputHandler : selectCell
+activate InputHandler
+InputHandler --> CreatePostItUI
+deactivate InputHandler
+CreatePostItUI -> InputHandler : inputText
+activate InputHandler
+InputHandler --> CreatePostItUI
+deactivate InputHandler
+CreatePostItUI -> CreatePostItUI : rightAnswer
+activate CreatePostItUI
+CreatePostItUI --> CreatePostItUI
+deactivate CreatePostItUI
+CreatePostItUI -> CreatePostItUI : rightAnswer
+activate CreatePostItUI
+CreatePostItUI --> CreatePostItUI
+deactivate CreatePostItUI
+CreatePostItUI -> InputHandler : inputUrl
+activate InputHandler
+InputHandler --> CreatePostItUI
+deactivate InputHandler
+CreatePostItUI -> SharedBoardApp : createPostItRequest
+activate SharedBoardApp
+create SBPMessage
+SharedBoardApp -> SBPMessage : new
+activate SBPMessage
+SBPMessage --> SharedBoardApp
+deactivate SBPMessage
+SharedBoardApp -> MessageService : sendMessage
+activate MessageService
+MessageService --> SharedBoardApp
+deactivate MessageService
+SharedBoardApp -> SharedBoardApp : readResponse
+activate SharedBoardApp
+SharedBoardApp --> SharedBoardApp
+deactivate SharedBoardApp
+SharedBoardApp --> CreatePostItUI
+deactivate SharedBoardApp
+CreatePostItUI -> SBPMessage : data
+activate SBPMessage
+SBPMessage --> CreatePostItUI
+deactivate SBPMessage
+CreatePostItUI --> SharedBoardApp
+deactivate CreatePostItUI
+create UpdatePostItUI
+SharedBoardApp -> UpdatePostItUI : new
+activate UpdatePostItUI
+UpdatePostItUI --> SharedBoardApp
+deactivate UpdatePostItUI
+SharedBoardApp -> UpdatePostItUI : run
+activate UpdatePostItUI
+UpdatePostItUI -> UpdatePostItUI : updateText
+activate UpdatePostItUI
+UpdatePostItUI -> InputHandler : selectCell
+activate InputHandler
+InputHandler --> UpdatePostItUI
+deactivate InputHandler
+UpdatePostItUI -> InputHandler : inputText
+activate InputHandler
+InputHandler --> UpdatePostItUI
+deactivate InputHandler
+UpdatePostItUI -> SharedBoardApp : updatePostItTextRequest
+activate SharedBoardApp
+SharedBoardApp --> UpdatePostItUI
+deactivate SharedBoardApp
+UpdatePostItUI -> SBPMessage : data
+activate SBPMessage
+SBPMessage --> UpdatePostItUI
+deactivate SBPMessage
+UpdatePostItUI --> UpdatePostItUI
+deactivate UpdatePostItUI
+UpdatePostItUI -> UpdatePostItUI : updateUrl
+activate UpdatePostItUI
+UpdatePostItUI -> InputHandler : selectCell
+activate InputHandler
+InputHandler --> UpdatePostItUI
+deactivate InputHandler
+UpdatePostItUI -> InputHandler : inputUrl
+activate InputHandler
+InputHandler --> UpdatePostItUI
+deactivate InputHandler
+UpdatePostItUI -> SharedBoardApp : updatePostItUrlRequest
+activate SharedBoardApp
+SharedBoardApp --> UpdatePostItUI
+deactivate SharedBoardApp
+UpdatePostItUI -> SBPMessage : data
+activate SBPMessage
+SBPMessage --> UpdatePostItUI
+deactivate SBPMessage
+UpdatePostItUI --> UpdatePostItUI
+deactivate UpdatePostItUI
+UpdatePostItUI -> UpdatePostItUI : movePostit
+activate UpdatePostItUI
+UpdatePostItUI -> InputHandler : selectCell
+activate InputHandler
+InputHandler --> UpdatePostItUI
+deactivate InputHandler
+UpdatePostItUI -> InputHandler : selectCell
+activate InputHandler
+InputHandler --> UpdatePostItUI
+deactivate InputHandler
+UpdatePostItUI -> SharedBoardApp : movePostItRequest
+activate SharedBoardApp
+SharedBoardApp --> UpdatePostItUI
+deactivate SharedBoardApp
+UpdatePostItUI -> SBPMessage : data
+activate SBPMessage
+SBPMessage --> UpdatePostItUI
+deactivate SBPMessage
+UpdatePostItUI --> UpdatePostItUI
+deactivate UpdatePostItUI
+UpdatePostItUI -> UpdatePostItUI : removePostit
+activate UpdatePostItUI
+UpdatePostItUI -> InputHandler : selectCell
+activate InputHandler
+InputHandler --> UpdatePostItUI
+deactivate InputHandler
+UpdatePostItUI -> SharedBoardApp : removePostItRequest
+activate SharedBoardApp
+SharedBoardApp --> UpdatePostItUI
+deactivate SharedBoardApp
+UpdatePostItUI -> SBPMessage : data
+activate SBPMessage
+SBPMessage --> UpdatePostItUI
+deactivate SBPMessage
+UpdatePostItUI --> UpdatePostItUI
+deactivate UpdatePostItUI
+UpdatePostItUI --> SharedBoardApp
+deactivate UpdatePostItUI
+SharedBoardApp --> SharedBoardApp
+deactivate SharedBoardApp
+SharedBoardApp -> SharedBoardApp : disconnRequest
+activate SharedBoardApp
+create SBPMessage
+SharedBoardApp -> SBPMessage : new
+activate SBPMessage
+SBPMessage --> SharedBoardApp
+deactivate SBPMessage
+SharedBoardApp -> SharedBoardApp : sendMessage
+activate SharedBoardApp
+SharedBoardApp -> MessageService : sendMessage
+activate MessageService
+MessageService -> SBPMessage : version
+activate SBPMessage
+SBPMessage --> MessageService
+deactivate SBPMessage
+MessageService -> SBPMessage : code
+activate SBPMessage
+SBPMessage --> MessageService
+deactivate SBPMessage
+MessageService -> SBPMessage : d_length_1
+activate SBPMessage
+SBPMessage --> MessageService
+deactivate SBPMessage
+MessageService -> SBPMessage : d_length_2
+activate SBPMessage
+SBPMessage --> MessageService
+deactivate SBPMessage
+MessageService -> SBPMessage : data
+activate SBPMessage
+SBPMessage --> MessageService
+deactivate SBPMessage
+MessageService --> SharedBoardApp
+deactivate MessageService
+SharedBoardApp --> SharedBoardApp
+deactivate SharedBoardApp
+SharedBoardApp -> SharedBoardApp : readMessage
+activate SharedBoardApp
+SharedBoardApp -> MessageService : readMessage
+activate MessageService
+create SBPMessage
+MessageService -> SBPMessage : new
+activate SBPMessage
+SBPMessage --> MessageService
+deactivate SBPMessage
+MessageService --> SharedBoardApp
+deactivate MessageService
+SharedBoardApp --> SharedBoardApp
+deactivate SharedBoardApp
+SharedBoardApp -> SBPMessage : code
+activate SBPMessage
+SBPMessage --> SharedBoardApp
+deactivate SBPMessage
+SharedBoardApp --> SharedBoardApp
+deactivate SharedBoardApp
+return
+@enduml
