@@ -131,18 +131,18 @@ public class SharedBoardServerThread implements Runnable {
             {"username","password"},
             {"admin","password"},
         };
-        String username = "";
-        String password = "";
+        String username = message.data().split("\0")[0];
+        String password = message.data().split("\0")[1];
 
         for (int i=0; i < userdata.length; i++){
             if(userdata[i][0].equals(username) && userdata[i][1].equals(password)){
                 SBPMessage responseMessage = new SBPMessage(1, SharedConstants.ACK_CODE, 0, 0, "");
                 messageService.sendMessage(responseMessage, sOut);
-            }else{
-                SBPMessage responseMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.ERR_CODE,"");
-                messageService.sendMessage(responseMessage, sOut);
+                break;
             }
         }
+        SBPMessage responseMessage = new SBPMessage(1, SharedConstants.ERR_CODE,"");
+        messageService.sendMessage(responseMessage, sOut);
 
     }
 
