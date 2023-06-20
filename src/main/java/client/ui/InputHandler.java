@@ -2,10 +2,13 @@ package client.ui;
 
 import messageUtils.SBPMessage;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.net.URL;
 
 public class InputHandler {
     public static String inputUrl(BufferedReader in) throws IOException {
@@ -15,12 +18,21 @@ public class InputHandler {
                 System.out.println("\nEnter the post it url: ");
                 String input = in.readLine();
 
+                Image image = ImageIO.read(new URL(input));
+                while(image==null){
+                    System.out.println("NOT IMAGE");
+                    System.out.println("Enter the post it url: ");
+                    input = in.readLine();
+                    image = ImageIO.read(new URL(input));
+                }
+                System.out.println("Image imported");
+
                 data = data.concat(input + "\0");
 
                 return data;
 
             } catch(Exception e) {
-                System.out.println("\nInvalid option. Please, try again:");
+                System.out.println("Error: " + e.getMessage());
             }
 
         } while(true);
