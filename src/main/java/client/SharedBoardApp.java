@@ -1,8 +1,6 @@
 package client;
 
-import client.httpServer.SimpleHttpServer;
 import client.ui.CreatePostItUI;
-import client.ui.ShareBoardUI;
 import client.ui.UpdatePostItUI;
 import messageUtils.MessageService;
 import messageUtils.SBPMessage;
