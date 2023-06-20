@@ -3,14 +3,10 @@ package client.ui;
 import client.SharedBoardApp;
 import messageUtils.SBPMessage;
 
-import java.awt.*;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 public class UpdatePostItUI implements Runnable {
     static final int ERR_CODE = 3;
@@ -89,8 +85,8 @@ public class UpdatePostItUI implements Runnable {
     }
 
     public static void updateText(BufferedReader in, DataOutputStream sOut, DataInputStream sIn) throws IOException {
-        String selectedCell = inputHandler.selectCell(in);
-        String newText = inputHandler.inputText(in);
+        String selectedCell = InputHandler.selectCell(in);
+        String newText = InputHandler.inputText(in);
 
         String dataToSend = selectedCell + "\0" + newText + "\0";
         SBPMessage updatePostItTextMessage = SharedBoardApp.updatePostItTextRequest(in, sOut, sIn, dataToSend);
@@ -99,8 +95,8 @@ public class UpdatePostItUI implements Runnable {
     }
 
     public static void updateUrl(BufferedReader in, DataOutputStream sOut, DataInputStream sIn) throws IOException {
-        String selectedCell = inputHandler.selectCell(in);
-        String newUrl = inputHandler.inputUrl(in);
+        String selectedCell = InputHandler.selectCell(in);
+        String newUrl = InputHandler.inputUrl(in);
 
         String dataToSend = selectedCell + "\0" + newUrl + "\0";
         SBPMessage updatePostItTextMessage = SharedBoardApp.updatePostItUrlRequest(in, sOut, sIn, dataToSend);
@@ -109,7 +105,7 @@ public class UpdatePostItUI implements Runnable {
     }
 
     public static void removePostit(BufferedReader in, DataOutputStream sOut, DataInputStream sIn) throws IOException {
-        String selectedCell = inputHandler.selectCell(in);
+        String selectedCell = InputHandler.selectCell(in);
 
         String dataToSend = selectedCell + "\0";
         SBPMessage updatePostItTextMessage = SharedBoardApp.removePostItRequest(in, sOut, sIn, dataToSend);
@@ -119,9 +115,9 @@ public class UpdatePostItUI implements Runnable {
 
     public static void movePostit(BufferedReader in, DataOutputStream sOut, DataInputStream sIn) throws IOException {
         System.out.println("\nSelect Post It to move: ");
-        String oldPosition = inputHandler.selectCell(in);
+        String oldPosition = InputHandler.selectCell(in);
         System.out.println("\nSelect new cell: ");
-        String newPosition = inputHandler.selectCell(in);
+        String newPosition = InputHandler.selectCell(in);
 
         String dataToSend = oldPosition + "\0" + newPosition;
         SBPMessage updatePostItTextMessage = SharedBoardApp.movePostItRequest(in, sOut, sIn, dataToSend);

@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class inputHandler {
+public class InputHandler {
     public static String inputUrl(BufferedReader in) throws IOException {
         String data ="";
         do {
