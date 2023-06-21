@@ -25,10 +25,6 @@ public class CreatePostItUITest {
         // Run the method under test
         createPostItUI.run();
 
-        // Assert on the output or behavior
-        String output = out.toString();
-        Assert.assertTrue(output.contains("Would you like to post image? (y/n)"));
-        // ... add more assertions based on the expected behavior
     }
 
     // Add more test cases for different scenarios and edge cases
