@@ -44,7 +44,7 @@ class InputHandlerTest {
     }
 
     @Test
-    void selectCell_ValidInput_ReturnsData() throws IOException {
+    void validInputCellDataTest() throws IOException {
         String validRow = "2";
         String validColumn = "3";
         when(bufferedReader.readLine()).thenReturn(validRow, validColumn);
@@ -53,6 +53,6 @@ class InputHandlerTest {
         String actualData = InputHandler.selectCell(bufferedReader);
 
         assertEquals(expectedData, actualData);
-    }
+    }
 
 }
