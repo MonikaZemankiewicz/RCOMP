@@ -42,7 +42,7 @@ public class SharedBoardApp {
         DataOutputStream sOut = new DataOutputStream(sock.getOutputStream());
         DataInputStream sIn = new DataInputStream(sock.getInputStream());
         messageService = new MessageService();
-
+        /*
         try{
             // Authenticate client
             System.out.println("[Login]");
@@ -54,6 +54,7 @@ public class SharedBoardApp {
         } catch (IOException e) {
             System.out.println("Error after authentication...");
             e.printStackTrace();}
+        */
 
         String option;
         System.out.println("Welcome!");
@@ -66,7 +67,7 @@ public class SharedBoardApp {
             option = in.readLine();
             switch(option) {
                 case "1":
-                        loggedUserMenu(in, sOut, sIn);
+                    loggedUserMenu(in, sOut, sIn);
                     break;
 
                 case "2":
@@ -111,13 +112,7 @@ public class SharedBoardApp {
                     break;
                 case "2":
                     responseMessage = shareBoardRequest(in, sOut, sIn);
-                    Desktop desktop = java.awt.Desktop.getDesktop();
-                    URI uri = URI.create(responseMessage.data());
-                    try {
-                        desktop.browse(uri);
-                    } catch (IOException e) {
-                        System.out.println(e.getMessage());
-                    }
+                    System.out.println(responseMessage);
                     break;
                 case "3":
                     new CreatePostItUI(in, sOut, sIn).run();
@@ -242,7 +237,6 @@ public class SharedBoardApp {
 
 
 }
-
 
 
 

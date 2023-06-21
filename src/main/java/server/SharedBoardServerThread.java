@@ -14,6 +14,7 @@ import java.net.SocketTimeoutException;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URI;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -73,9 +74,8 @@ public class SharedBoardServerThread implements Runnable {
                         break;
 
                     case SharedConstants.SHARE_BOARD_REQUEST_CODE:
-                        System.out.println("Share board request coming from " + clientIP.getHostAddress() + ", port number " + s.getPort());
-                        SBPMessage answer = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.SHARE_BOARD_RESPONSE_CODE, "http://localhost:8000/index.html");
-                        shareBoardResponse(answer, sOut, sIn);
+                        System.out.println("Open board request coming from " + clientIP.getHostAddress() + ", port number " + s.getPort());
+                        shareBoardResponse(sOut, sIn);
                         break;
 
                     case SharedConstants.CREATE_POST_IT_REQUEST_CODE:
@@ -177,8 +177,15 @@ public class SharedBoardServerThread implements Runnable {
         messageService.sendMessage(responseMessage, sOut);
     }
 
-    public static void shareBoardResponse(SBPMessage message, DataOutputStream sOut, DataInputStream sIn) throws IOException {
-        SBPMessage responseMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.SHARE_BOARD_RESPONSE_CODE, message.data());
+    public static void shareBoardResponse(DataOutputStream sOut, DataInputStream sIn) throws IOException {
+        Desktop desktop = java.awt.Desktop.getDesktop();
+        URI uri = URI.create("http://localhost:8000/");
+        try {
+            desktop.browse(uri);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+        SBPMessage responseMessage = new SBPMessage(SharedConstants.MESSAGE_VERSION, SharedConstants.SHARE_BOARD_RESPONSE_CODE, "Board opened in the browser");
         //finally send response
         messageService.sendMessage(responseMessage, sOut);
     }
