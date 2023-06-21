@@ -17,7 +17,7 @@ public class CreatePostItUITest {
 
     @Test
     public void testRun() {
-        // Set up input for the test
+        // Input
         String input = "n";
         in = new BufferedReader(new StringReader(input + System.lineSeparator()));
         createPostItUI.in = in;
@@ -25,10 +25,10 @@ public class CreatePostItUITest {
         // Run the method under test
         createPostItUI.run();
 
-        // Assert on the output or behavior
+        // Assert on the output
         String output = out.toString();
         Assert.assertTrue(output.contains("Would you like to post image? (y/n)"));
-        // ... add more assertions based on the expected behavior
+        
     }
 
     // Add more test cases for different scenarios and edge cases
