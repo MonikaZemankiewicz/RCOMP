@@ -53,6 +53,6 @@ class InputHandlerTest {
         String actualData = InputHandler.selectCell(bufferedReader);
 
         assertEquals(expectedData, actualData);
-    }
+    }
 
 }

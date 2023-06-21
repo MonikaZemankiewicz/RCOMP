@@ -47,5 +47,5 @@ public class MessageServiceTest {
         Assertions.assertEquals(1, sentMessage.version());
         Assertions.assertEquals(2, sentMessage.code());
         Assertions.assertEquals("Test Message", sentMessage.data());
-        }
+    }
 }
