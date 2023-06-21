@@ -133,16 +133,21 @@ public class SharedBoardServerThread implements Runnable {
         };
         String username = message.data().split("\0")[0];
         String password = message.data().split("\0")[1];
-
+        boolean authenticated = false;
         for (int i=0; i < userdata.length; i++){
             if(userdata[i][0].equals(username) && userdata[i][1].equals(password)){
-                SBPMessage responseMessage = new SBPMessage(1, SharedConstants.ACK_CODE, 0, 0, "");
-                messageService.sendMessage(responseMessage, sOut);
+                authenticated = true;
                 break;
             }
         }
-        SBPMessage responseMessage = new SBPMessage(1, SharedConstants.ERR_CODE,"");
-        messageService.sendMessage(responseMessage, sOut);
+        if(authenticated == true){
+            SBPMessage responseMessage = new SBPMessage(1, SharedConstants.ACK_CODE, 0, 0, "");
+            messageService.sendMessage(responseMessage, sOut);
+        }
+        else{
+            SBPMessage responseMessage = new SBPMessage(1, SharedConstants.ERR_CODE,"");
+            messageService.sendMessage(responseMessage, sOut);
+        }
 
     }
 
